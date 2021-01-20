@@ -27,8 +27,8 @@ void processInput(GLFWwindow *window);
 void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods);
 
 // settings
-const unsigned int SCR_WIDTH = 800;
-const unsigned int SCR_HEIGHT = 600;
+const unsigned int SCR_WIDTH = 1024;
+const unsigned int SCR_HEIGHT = 768;
 
 // camera
 
@@ -53,7 +53,7 @@ struct PointLight {
 
 struct ProgramState {
     glm::vec3 clearColor = glm::vec3(0);
-    bool ImGuiEnabled = false;
+    bool ImGuiEnabled = true;
     Camera camera;
     bool CameraMouseMovementUpdateEnabled = true;
     glm::vec3 backpackPosition = glm::vec3(0.0f);
@@ -162,6 +162,69 @@ int main() {
     // build and compile shaders
     // -------------------------
     Shader ourShader("resources/shaders/2.model_lighting.vs", "resources/shaders/2.model_lighting.fs");
+    Shader wallShader("resources/shaders/wallShader.vs","resources/shaders/wallShader.fs");
+
+    //build wall
+    float wallVertices[] = {
+            // positions         // texture coords
+            0.5f,  0.5f, 0.0f,   1.0f, 1.0f, // top right
+            0.5f, -0.5f, 0.0f,   1.0f, 0.0f, // bottom right
+            -0.5f, -0.5f, 0.0f,  0.0f, 0.0f, // bottom left
+            -0.5f,  0.5f, 0.0f,   0.0f, 1.0f  // top left
+    };
+    unsigned int wallIndices[] = {
+            0, 1, 3, // first triangle
+            1, 2, 3  // second triangle
+    };
+    unsigned int VBO, VAO, EBO;
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
+    glGenBuffers(1, &EBO);
+
+    glBindVertexArray(VAO);
+
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(wallVertices), wallVertices, GL_STATIC_DRAW);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(wallIndices), wallIndices, GL_STATIC_DRAW);
+
+    // position attribute
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
+    // texture coord attribute
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+
+
+    // load and create a texture
+    // -------------------------
+    unsigned int texture1;
+    glGenTextures(1, &texture1);
+    glBindTexture(GL_TEXTURE_2D, texture1); // all upcoming GL_TEXTURE_2D operations now have effect on this texture object
+    // set the texture wrapping parameters
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    // set texture filtering parameters
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    // load image, create texture and generate mipmaps
+    int width, height, nrChannels;
+    // The FileSystem::getPath(...) is part of the GitHub repository so we can find files on any IDE/platform; replace it with your own image path.
+    unsigned char *data = stbi_load(FileSystem::getPath("resources/textures/container.jpg").c_str(), &width, &height, &nrChannels, 0);
+    if (data)
+    {
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+        glGenerateMipmap(GL_TEXTURE_2D);
+    }
+    else
+    {
+        std::cout << "Failed to load texture" << std::endl;
+    }
+    stbi_image_free(data);
+    wallShader.use();
+    wallShader.setInt("texture1",0);
 
     // load models
     // -----------
@@ -202,6 +265,8 @@ int main() {
         glClearColor(programState->clearColor.r, programState->clearColor.g, programState->clearColor.b, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+
+
         // don't forget to enable shader before setting uniforms
         ourShader.use();
         pointLight.position = glm::vec3(4.0 * cos(currentFrame), 4.0f, 4.0 * sin(currentFrame));
@@ -216,7 +281,7 @@ int main() {
         ourShader.setFloat("material.shininess", 32.0f);
         // view/projection transformations
         glm::mat4 projection = glm::perspective(glm::radians(programState->camera.Zoom),
-                                                (float) SCR_WIDTH / (float) SCR_HEIGHT, 0.1f, 100.0f);
+                                                (float) SCR_WIDTH / (float) SCR_HEIGHT, 0.1f, 200.0f);
         glm::mat4 view = programState->camera.GetViewMatrix();
         ourShader.setMat4("projection", projection);
         ourShader.setMat4("view", view);
@@ -225,9 +290,72 @@ int main() {
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model,
                                programState->backpackPosition); // translate it down so it's at the center of the scene
+//        model = glm::rotate(model,(float)glfwGetTime()*10.0f,glm::vec3(0.0f,0.0f,1.0f));
         model = glm::scale(model, glm::vec3(programState->backpackScale));    // it's a bit too big for our scene, so scale it down
         ourShader.setMat4("model", model);
         ourModel.Draw(ourShader);
+
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D,texture1);
+
+        #define xTranslate (0.0f)
+        #define yTranslate (0.0f)
+        #define zTranslate (20.0f)
+        #define roomScaling (2.0f)
+
+        glm::vec3 roomTranslate(xTranslate,yTranslate,zTranslate);
+
+        //wall 1
+        glm::mat4 wallPosition=glm::mat4(1.0f);
+        wallPosition=glm::translate(wallPosition,roomScaling*(glm::vec3(0.0f,0.0f,-60.0f)+roomTranslate));
+        wallPosition=glm::scale(wallPosition,roomScaling*glm::vec3(60.0f,30.0f,1.0f));
+        wallShader.use();
+        wallShader.setMat4("transform",wallPosition);
+        wallShader.setMat4("view",view);
+        wallShader.setMat4("projection",projection);
+        glBindVertexArray(VAO);
+        glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_INT,0);
+//        glBindVertexArray(0);
+
+        //wall 2
+        wallPosition=glm::mat4(1.0f);
+        wallPosition=glm::translate(wallPosition,roomScaling*(glm::vec3(30.0f,0.0f,-30.0f)+roomTranslate));
+        wallPosition=glm::rotate(wallPosition,glm::radians(90.0f),glm::vec3(0.0f,1.0f,0.0f));
+        wallPosition=glm::scale(wallPosition,roomScaling*glm::vec3(60.0f,30.0f,1.0f));
+        wallShader.setMat4("transform",wallPosition);
+        glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_INT,0);
+
+        //wall 3
+        wallPosition=glm::mat4(1.0f);
+        wallPosition=glm::translate(wallPosition,roomScaling*(glm::vec3(-30.0f,0.0f,-30.0f)+roomTranslate));
+        wallPosition=glm::rotate(wallPosition,glm::radians(90.0f),glm::vec3(0.0f,1.0f,0.0f));
+        wallPosition=glm::scale(wallPosition,roomScaling*glm::vec3(60.0f,30.0f,1.0f));
+        wallShader.setMat4("transform",wallPosition);
+        glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_INT,0);
+
+        //wall 4
+        wallPosition=glm::mat4(1.0f);
+        wallPosition=glm::translate(wallPosition,roomScaling*(glm::vec3(0.0f,0.0f,0.0f)+roomTranslate));
+        wallPosition=glm::scale(wallPosition,roomScaling*glm::vec3(60.0f,30.0f,1.0f));
+        wallShader.setMat4("transform",wallPosition);
+        glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_INT,0);
+
+        //floor
+        wallPosition=glm::mat4(1.0f);
+        wallPosition=glm::translate(wallPosition,roomScaling*(glm::vec3(0.0f,-15.0f,-30.0f)+roomTranslate));
+        wallPosition=glm::rotate(wallPosition,glm::radians(90.0f),glm::vec3(1.0f,0.0f,0.0f));
+        wallPosition=glm::scale(wallPosition,roomScaling*glm::vec3(60.0f,60.0f,1.0f));
+        wallShader.setMat4("transform",wallPosition);
+        glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_INT,0);
+
+
+        //ceiling
+        wallPosition=glm::mat4(1.0f);
+        wallPosition=glm::translate(wallPosition,roomScaling*(glm::vec3(0.0f,15.0f,-30.0f)+roomTranslate));
+        wallPosition=glm::rotate(wallPosition,glm::radians(90.0f),glm::vec3(1.0f,0.0f,0.0f));
+        wallPosition=glm::scale(wallPosition,roomScaling*glm::vec3(60.0f,60.0f,1.0f));
+        wallShader.setMat4("transform",wallPosition);
+        glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_INT,0);
 
         if (programState->ImGuiEnabled)
             DrawImGui(programState);
