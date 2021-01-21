@@ -16,6 +16,7 @@
 #include <RectangleObject.h>
 
 #include <iostream>
+#include <Game.h>
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 
@@ -251,6 +252,10 @@ int main() {
     // draw in wireframe
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
+    Game* game = new Game();
+    MoveableObject* testObject = new MoveableObject();
+    game->addMoveable(testObject);
+
     // render loop
     // -----------
 
@@ -260,6 +265,8 @@ int main() {
         float currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
+
+        game->gameTick(deltaTime);
 
         // input
         // -----
@@ -349,6 +356,8 @@ int main() {
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
+
+    delete game;
 
     programState->SaveToFile("resources/program_state.txt");
     delete programState;
