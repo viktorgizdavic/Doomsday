@@ -13,6 +13,7 @@
 #include <learnopengl/shader.h>
 #include <learnopengl/camera.h>
 #include <learnopengl/model.h>
+#include <RectangleObject.h>
 
 #include <iostream>
 
@@ -53,7 +54,7 @@ struct PointLight {
 
 struct ProgramState {
     glm::vec3 clearColor = glm::vec3(0);
-    bool ImGuiEnabled = true;
+    bool ImGuiEnabled = false;
     Camera camera;
     bool CameraMouseMovementUpdateEnabled = true;
     glm::vec3 backpackPosition = glm::vec3(0.0f);
@@ -162,7 +163,10 @@ int main() {
     // build and compile shaders
     // -------------------------
     Shader ourShader("resources/shaders/2.model_lighting.vs", "resources/shaders/2.model_lighting.fs");
-    Shader wallShader("resources/shaders/wallShader.vs","resources/shaders/wallShader.fs");
+    Shader wallShader("resources/shaders/rectangleObjectShader.vs","resources/shaders/rectangleObjectShader.fs");
+
+//    RectangleObject rect ("resources/textures/container.jpg");
+
 
     //build wall
     float wallVertices[] = {
@@ -226,6 +230,7 @@ int main() {
     wallShader.use();
     wallShader.setInt("texture1",0);
 
+
     // load models
     // -----------
     Model ourModel("resources/objects/backpack/backpack.obj");
@@ -281,7 +286,7 @@ int main() {
         ourShader.setFloat("material.shininess", 32.0f);
         // view/projection transformations
         glm::mat4 projection = glm::perspective(glm::radians(programState->camera.Zoom),
-                                                (float) SCR_WIDTH / (float) SCR_HEIGHT, 0.1f, 200.0f);
+                                                (float) SCR_WIDTH / (float) SCR_HEIGHT, 0.1f, 600.0f);
         glm::mat4 view = programState->camera.GetViewMatrix();
         ourShader.setMat4("projection", projection);
         ourShader.setMat4("view", view);
@@ -301,9 +306,15 @@ int main() {
         #define xTranslate (0.0f)
         #define yTranslate (0.0f)
         #define zTranslate (20.0f)
-        #define roomScaling (2.0f)
+        #define xScaling (4.0f)
+        #define yScaling (2.0f)
+        #define zScaling (4.0f)
 
+        glm::vec3 roomScaling(xScaling,yScaling,zScaling);
+        glm::vec3 roomScalingVertical(xScaling,zScaling,yScaling);
         glm::vec3 roomTranslate(xTranslate,yTranslate,zTranslate);
+
+//        rect.setup(projection,view);
 
         //wall 1
         glm::mat4 wallPosition=glm::mat4(1.0f);
@@ -317,6 +328,12 @@ int main() {
         glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_INT,0);
 //        glBindVertexArray(0);
 
+//        rect.resetTransformation();
+//        rect.translate(roomScaling*(glm::vec3(0.0f,0.0f,-60.0f)+roomTranslate));
+//        rect.scale(roomScaling*glm::vec3(60.0f,30.0f,1.0f));
+//        rect.applyTransformation();
+//        rect.draw();
+
         //wall 2
         wallPosition=glm::mat4(1.0f);
         wallPosition=glm::translate(wallPosition,roomScaling*(glm::vec3(30.0f,0.0f,-30.0f)+roomTranslate));
@@ -324,6 +341,12 @@ int main() {
         wallPosition=glm::scale(wallPosition,roomScaling*glm::vec3(60.0f,30.0f,1.0f));
         wallShader.setMat4("transform",wallPosition);
         glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_INT,0);
+//        rect.resetTransformation();
+//        rect.translate(roomScaling*(glm::vec3(30.0f,0.0f,-30.0f)+roomTranslate));
+//        rect.rotate(90.0f,glm::vec3(0.0f,1.0f,0.0f));
+//        rect.scale(roomScaling*glm::vec3(60.0f,30.0f,1.0f));
+//        rect.applyTransformation();
+//        rect.draw();
 
         //wall 3
         wallPosition=glm::mat4(1.0f);
@@ -332,6 +355,12 @@ int main() {
         wallPosition=glm::scale(wallPosition,roomScaling*glm::vec3(60.0f,30.0f,1.0f));
         wallShader.setMat4("transform",wallPosition);
         glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_INT,0);
+//        rect.resetTransformation();
+//        rect.translate(roomScaling*(glm::vec3(-30.0f,0.0f,-30.0f)+roomTranslate));
+//        rect.rotate(90.0f,glm::vec3(0.0f,1.0f,0.0f));
+//        rect.scale(roomScaling*glm::vec3(60.0f,30.0f,1.0f));
+//        rect.applyTransformation();
+//        rect.draw();
 
         //wall 4
         wallPosition=glm::mat4(1.0f);
@@ -339,23 +368,40 @@ int main() {
         wallPosition=glm::scale(wallPosition,roomScaling*glm::vec3(60.0f,30.0f,1.0f));
         wallShader.setMat4("transform",wallPosition);
         glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_INT,0);
+//        rect.resetTransformation();
+//        rect.translate(roomScaling*(glm::vec3(0.0f,0.0f,0.0f)+roomTranslate));
+//        rect.scale(roomScaling*glm::vec3(60.0f,30.0f,1.0f));
+//        rect.applyTransformation();
+//        rect.draw();
 
         //floor
         wallPosition=glm::mat4(1.0f);
         wallPosition=glm::translate(wallPosition,roomScaling*(glm::vec3(0.0f,-15.0f,-30.0f)+roomTranslate));
         wallPosition=glm::rotate(wallPosition,glm::radians(90.0f),glm::vec3(1.0f,0.0f,0.0f));
-        wallPosition=glm::scale(wallPosition,roomScaling*glm::vec3(60.0f,60.0f,1.0f));
+        wallPosition=glm::scale(wallPosition,roomScalingVertical*glm::vec3(60.0f,60.0f,1.0f));
         wallShader.setMat4("transform",wallPosition);
         glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_INT,0);
+//        rect.resetTransformation();
+//        rect.translate(roomScaling*(glm::vec3(0.0f,-15.0f,-30.0f)+roomTranslate));
+//        rect.rotate(90.0f,glm::vec3(1.0f,0.0f,0.0f));
+//        rect.scale(roomScalingVertical*glm::vec3(60.0f,60.0f,1.0f));
+//        rect.applyTransformation();
+//        rect.draw();
 
 
         //ceiling
         wallPosition=glm::mat4(1.0f);
         wallPosition=glm::translate(wallPosition,roomScaling*(glm::vec3(0.0f,15.0f,-30.0f)+roomTranslate));
         wallPosition=glm::rotate(wallPosition,glm::radians(90.0f),glm::vec3(1.0f,0.0f,0.0f));
-        wallPosition=glm::scale(wallPosition,roomScaling*glm::vec3(60.0f,60.0f,1.0f));
+        wallPosition=glm::scale(wallPosition,roomScalingVertical*glm::vec3(60.0f,60.0f,1.0f));
         wallShader.setMat4("transform",wallPosition);
         glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_INT,0);
+//        rect.resetTransformation();
+//        rect.translate(roomScaling*(glm::vec3(0.0f,15.0f,-30.0f)+roomTranslate));
+//        rect.rotate(90.0f,glm::vec3(1.0f,0.0f,0.0f));
+//        rect.scale(roomScalingVertical*glm::vec3(60.0f,60.0f,1.0f));
+//        rect.applyTransformation();
+//        rect.draw();
 
         if (programState->ImGuiEnabled)
             DrawImGui(programState);
