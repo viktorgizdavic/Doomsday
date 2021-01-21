@@ -57,11 +57,11 @@ struct ProgramState {
     bool ImGuiEnabled = false;
     Camera camera;
     bool CameraMouseMovementUpdateEnabled = true;
-    glm::vec3 backpackPosition = glm::vec3(0.0f);
+    glm::vec3 backpackPosition = glm::vec3(0.0f, -10.0f, 0.0f);
     float backpackScale = 1.0f;
     PointLight pointLight;
     ProgramState()
-            : camera(glm::vec3(0.0f, 0.0f, 3.0f)) {}
+            : camera(glm::vec3(0.0f, -10.0f, 3.0f)) {}
 
     void SaveToFile(std::string filename);
 
@@ -165,7 +165,7 @@ int main() {
     Shader ourShader("resources/shaders/2.model_lighting.vs", "resources/shaders/2.model_lighting.fs");
     Shader wallShader("resources/shaders/rectangleObjectShader.vs","resources/shaders/rectangleObjectShader.fs");
 
-//    RectangleObject rect ("resources/textures/container.jpg");
+    RectangleObject rect("resources/textures/container.jpg");
 
 
     //build wall
@@ -253,6 +253,7 @@ int main() {
 
     // render loop
     // -----------
+
     while (!glfwWindowShouldClose(window)) {
         // per-frame time logic
         // --------------------
@@ -269,7 +270,6 @@ int main() {
         // ------
         glClearColor(programState->clearColor.r, programState->clearColor.g, programState->clearColor.b, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
 
 
         // don't forget to enable shader before setting uniforms
@@ -300,9 +300,6 @@ int main() {
         ourShader.setMat4("model", model);
         ourModel.Draw(ourShader);
 
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D,texture1);
-
         #define xTranslate (0.0f)
         #define yTranslate (0.0f)
         #define zTranslate (20.0f)
@@ -314,99 +311,38 @@ int main() {
         glm::vec3 roomScalingVertical(xScaling,zScaling,yScaling);
         glm::vec3 roomTranslate(xTranslate,yTranslate,zTranslate);
 
-//        rect.setup(projection,view);
+        rect.setup(projection,view);
 
-        //wall 1
-        glm::mat4 wallPosition=glm::mat4(1.0f);
-        wallPosition=glm::translate(wallPosition,roomScaling*(glm::vec3(0.0f,0.0f,-60.0f)+roomTranslate));
-        wallPosition=glm::scale(wallPosition,roomScaling*glm::vec3(60.0f,30.0f,1.0f));
-        wallShader.use();
-        wallShader.setMat4("transform",wallPosition);
-        wallShader.setMat4("view",view);
-        wallShader.setMat4("projection",projection);
-        glBindVertexArray(VAO);
-        glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_INT,0);
-//        glBindVertexArray(0);
+        rect.translate(roomScaling*(glm::vec3(0.0f,0.0f,-60.0f)+roomTranslate));
+        rect.scale(roomScaling*glm::vec3(60.0f,30.0f,1.0f));
+        rect.draw();
 
-//        rect.resetTransformation();
-//        rect.translate(roomScaling*(glm::vec3(0.0f,0.0f,-60.0f)+roomTranslate));
-//        rect.scale(roomScaling*glm::vec3(60.0f,30.0f,1.0f));
-//        rect.applyTransformation();
-//        rect.draw();
+        rect.translate(roomScaling*(glm::vec3(30.0f,0.0f,-30.0f)+roomTranslate));
+        rect.rotate(90.0f,glm::vec3(0.0f,1.0f,0.0f));
+        rect.scale(roomScaling*glm::vec3(60.0f,30.0f,1.0f));
+        rect.draw();
 
-        //wall 2
-        wallPosition=glm::mat4(1.0f);
-        wallPosition=glm::translate(wallPosition,roomScaling*(glm::vec3(30.0f,0.0f,-30.0f)+roomTranslate));
-        wallPosition=glm::rotate(wallPosition,glm::radians(90.0f),glm::vec3(0.0f,1.0f,0.0f));
-        wallPosition=glm::scale(wallPosition,roomScaling*glm::vec3(60.0f,30.0f,1.0f));
-        wallShader.setMat4("transform",wallPosition);
-        glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_INT,0);
-//        rect.resetTransformation();
-//        rect.translate(roomScaling*(glm::vec3(30.0f,0.0f,-30.0f)+roomTranslate));
-//        rect.rotate(90.0f,glm::vec3(0.0f,1.0f,0.0f));
-//        rect.scale(roomScaling*glm::vec3(60.0f,30.0f,1.0f));
-//        rect.applyTransformation();
-//        rect.draw();
+        rect.translate(roomScaling*(glm::vec3(-30.0f,0.0f,-30.0f)+roomTranslate));
+        rect.rotate(90.0f,glm::vec3(0.0f,1.0f,0.0f));
+        rect.scale(roomScaling*glm::vec3(60.0f,30.0f,1.0f));
+        rect.draw();
 
-        //wall 3
-        wallPosition=glm::mat4(1.0f);
-        wallPosition=glm::translate(wallPosition,roomScaling*(glm::vec3(-30.0f,0.0f,-30.0f)+roomTranslate));
-        wallPosition=glm::rotate(wallPosition,glm::radians(90.0f),glm::vec3(0.0f,1.0f,0.0f));
-        wallPosition=glm::scale(wallPosition,roomScaling*glm::vec3(60.0f,30.0f,1.0f));
-        wallShader.setMat4("transform",wallPosition);
-        glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_INT,0);
-//        rect.resetTransformation();
-//        rect.translate(roomScaling*(glm::vec3(-30.0f,0.0f,-30.0f)+roomTranslate));
-//        rect.rotate(90.0f,glm::vec3(0.0f,1.0f,0.0f));
-//        rect.scale(roomScaling*glm::vec3(60.0f,30.0f,1.0f));
-//        rect.applyTransformation();
-//        rect.draw();
+        rect.translate(roomScaling*(glm::vec3(0.0f,0.0f,0.0f)+roomTranslate));
+        rect.scale(roomScaling*glm::vec3(60.0f,30.0f,1.0f));
+        rect.draw();
 
-        //wall 4
-        wallPosition=glm::mat4(1.0f);
-        wallPosition=glm::translate(wallPosition,roomScaling*(glm::vec3(0.0f,0.0f,0.0f)+roomTranslate));
-        wallPosition=glm::scale(wallPosition,roomScaling*glm::vec3(60.0f,30.0f,1.0f));
-        wallShader.setMat4("transform",wallPosition);
-        glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_INT,0);
-//        rect.resetTransformation();
-//        rect.translate(roomScaling*(glm::vec3(0.0f,0.0f,0.0f)+roomTranslate));
-//        rect.scale(roomScaling*glm::vec3(60.0f,30.0f,1.0f));
-//        rect.applyTransformation();
-//        rect.draw();
+        rect.translate(roomScaling*(glm::vec3(0.0f,-15.0f,-30.0f)+roomTranslate));
+        rect.rotate(90.0f,glm::vec3(1.0f,0.0f,0.0f));
+        rect.scale(roomScalingVertical*glm::vec3(60.0f,60.0f,1.0f));
+        rect.draw();
 
-        //floor
-        wallPosition=glm::mat4(1.0f);
-        wallPosition=glm::translate(wallPosition,roomScaling*(glm::vec3(0.0f,-15.0f,-30.0f)+roomTranslate));
-        wallPosition=glm::rotate(wallPosition,glm::radians(90.0f),glm::vec3(1.0f,0.0f,0.0f));
-        wallPosition=glm::scale(wallPosition,roomScalingVertical*glm::vec3(60.0f,60.0f,1.0f));
-        wallShader.setMat4("transform",wallPosition);
-        glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_INT,0);
-//        rect.resetTransformation();
-//        rect.translate(roomScaling*(glm::vec3(0.0f,-15.0f,-30.0f)+roomTranslate));
-//        rect.rotate(90.0f,glm::vec3(1.0f,0.0f,0.0f));
-//        rect.scale(roomScalingVertical*glm::vec3(60.0f,60.0f,1.0f));
-//        rect.applyTransformation();
-//        rect.draw();
-
-
-        //ceiling
-        wallPosition=glm::mat4(1.0f);
-        wallPosition=glm::translate(wallPosition,roomScaling*(glm::vec3(0.0f,15.0f,-30.0f)+roomTranslate));
-        wallPosition=glm::rotate(wallPosition,glm::radians(90.0f),glm::vec3(1.0f,0.0f,0.0f));
-        wallPosition=glm::scale(wallPosition,roomScalingVertical*glm::vec3(60.0f,60.0f,1.0f));
-        wallShader.setMat4("transform",wallPosition);
-        glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_INT,0);
-//        rect.resetTransformation();
-//        rect.translate(roomScaling*(glm::vec3(0.0f,15.0f,-30.0f)+roomTranslate));
-//        rect.rotate(90.0f,glm::vec3(1.0f,0.0f,0.0f));
-//        rect.scale(roomScalingVertical*glm::vec3(60.0f,60.0f,1.0f));
-//        rect.applyTransformation();
-//        rect.draw();
+        rect.translate(roomScaling*(glm::vec3(0.0f,15.0f,-30.0f)+roomTranslate));
+        rect.rotate(90.0f,glm::vec3(1.0f,0.0f,0.0f));
+        rect.scale(roomScalingVertical*glm::vec3(60.0f,60.0f,1.0f));
+        rect.draw();
 
         if (programState->ImGuiEnabled)
             DrawImGui(programState);
-
-
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------

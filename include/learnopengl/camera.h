@@ -33,6 +33,7 @@ public:
     glm::vec3 Up;
     glm::vec3 Right;
     glm::vec3 WorldUp;
+    glm::vec3 movementDir;
     // euler Angles
     float Yaw;
     float Pitch;
@@ -71,9 +72,9 @@ public:
     {
         float velocity = MovementSpeed * deltaTime;
         if (direction == FORWARD)
-            Position += Front * velocity;
+            Position += movementDir * velocity;
         if (direction == BACKWARD)
-            Position -= Front * velocity;
+            Position -= movementDir * velocity;
         if (direction == LEFT)
             Position -= Right * velocity;
         if (direction == RIGHT)
@@ -125,6 +126,12 @@ private:
         // also re-calculate the Right and Up vector
         Right = glm::normalize(glm::cross(Front, WorldUp));  // normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.
         Up    = glm::normalize(glm::cross(Right, Front));
+
+        // calculate the projection of the front vector to XZ-plane
+        // used for land movement instead of front vector
+
+        front.y = 0.0f;  // y-axis is fixed, and it's the plane in which the player moves
+        movementDir = glm::normalize(front);
     }
 };
 #endif

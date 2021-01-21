@@ -34,7 +34,6 @@ private:
 
     unsigned int VBO, VAO, EBO;
     unsigned int texture1;
-    bool isVAOBound=false;
     Shader rectShader;
     glm::mat4 position=glm::mat4(1.0f);
 
@@ -82,6 +81,7 @@ public:
         int width, height, nrChannels;
         // The FileSystem::getPath(...) is part of the GitHub repository so we can find files on any IDE/platform; replace it with your own image path.
         unsigned char *data = stbi_load(FileSystem::getPath(texturePath).c_str(), &width, &height, &nrChannels, 0);
+        std::cout << FileSystem::getPath(texturePath).c_str();
         if (data)
         {
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
@@ -97,18 +97,10 @@ public:
     }
     void setup(glm::mat4 projection,glm::mat4 view)
     {
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D,texture1);
-
         rectShader.use();
         rectShader.setMat4("view",view);
         rectShader.setMat4("projection",projection);
         rectShader.setMat4("transform",position);
-        if(!isVAOBound)
-        {
-            glBindVertexArray(VAO);
-            isVAOBound=true;
-        }
     }
     void resetTransformation()
     {
@@ -116,6 +108,7 @@ public:
     }
     void applyTransformation()
     {
+        rectShader.use();
         rectShader.setMat4("transform",position);
     }
     void translate(glm::vec3 vector)
@@ -132,7 +125,19 @@ public:
     }
     void draw()
     {
+        applyTransformation();
+
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, texture1);
+
+        glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_INT,0);
+        glBindVertexArray(0);
+
+        // TODO: google how to unbind texture (?)
+        glActiveTexture(GL_TEXTURE0);
+
+        resetTransformation();
     }
 
 };
