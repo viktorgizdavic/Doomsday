@@ -7,6 +7,7 @@
 
 #include <vector>
 #include "MoveableObject.h"
+#include <RectangleObject.h>
 
 class Game {
 public:

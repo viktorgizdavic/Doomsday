@@ -13,11 +13,14 @@
 #include <learnopengl/shader.h>
 #include <learnopengl/camera.h>
 #include <learnopengl/model.h>
-#include <RectangleObject.h>
-#include <Room.h>
+
 
 #include <iostream>
 #include <Game.h>
+
+#include <Room.h>
+#include <Cube.h>
+#include <LightCube.h>
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 
@@ -169,8 +172,9 @@ int main() {
 
 //    RectangleObject rect("resources/textures/container.jpg");
 
-    Room warehouse ("resources/textures/container.jpg","resources/textures/awesomeface.png");
-
+    Room warehouse ("resources/textures/container.jpg","resources/textures/container.jpg","resources/textures/awesomeface.png","resources/textures/awesomeface.png");
+    LightCube light(glm::vec3(1.0f));
+    Cube c1 ("resources/textures/container.jpg","resources/textures/container.jpg");
 //    //build wall
 //    float wallVertices[] = {
 //            // positions         // texture coords
@@ -236,20 +240,21 @@ int main() {
 
     // load models
     // -----------
-    Model ourModel("resources/objects/backpack/backpack.obj");
-    ourModel.SetShaderTextureNamePrefix("material.");
+//    Model ourModel("resources/objects/backpack/backpack.obj");
+//    ourModel.SetShaderTextureNamePrefix("material.");
+//
+//    PointLight& pointLight = programState->pointLight;
+//    pointLight.position = glm::vec3(4.0f, 4.0, 0.0);
+//    pointLight.ambient = glm::vec3(0.1, 0.1, 0.1);
+//    pointLight.diffuse = glm::vec3(0.6, 0.6, 0.6);
+//    pointLight.specular = glm::vec3(1.0, 1.0, 1.0);
+//
+//    pointLight.constant = 1.0f;
+//    pointLight.linear = 0.09f;
+//    pointLight.quadratic = 0.032f;
 
-    PointLight& pointLight = programState->pointLight;
-    pointLight.position = glm::vec3(4.0f, 4.0, 0.0);
-    pointLight.ambient = glm::vec3(0.1, 0.1, 0.1);
-    pointLight.diffuse = glm::vec3(0.6, 0.6, 0.6);
-    pointLight.specular = glm::vec3(1.0, 1.0, 1.0);
-
-    pointLight.constant = 1.0f;
-    pointLight.linear = 0.09f;
-    pointLight.quadratic = 0.032f;
-
-
+    glm::vec3 scaling(4.0f,2.0f,4.0f);
+    glm::vec3 translated(0.0f,0.0f,20.0f);
 
     // draw in wireframe
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -282,35 +287,67 @@ int main() {
 
 
         // don't forget to enable shader before setting uniforms
-        ourShader.use();
-        pointLight.position = glm::vec3(4.0 * cos(currentFrame), 4.0f, 4.0 * sin(currentFrame));
-        ourShader.setVec3("pointLight.position", pointLight.position);
-        ourShader.setVec3("pointLight.ambient", pointLight.ambient);
-        ourShader.setVec3("pointLight.diffuse", pointLight.diffuse);
-        ourShader.setVec3("pointLight.specular", pointLight.specular);
-        ourShader.setFloat("pointLight.constant", pointLight.constant);
-        ourShader.setFloat("pointLight.linear", pointLight.linear);
-        ourShader.setFloat("pointLight.quadratic", pointLight.quadratic);
-        ourShader.setVec3("viewPosition", programState->camera.Position);
-        ourShader.setFloat("material.shininess", 32.0f);
+//        ourShader.use();
+//        pointLight.position = glm::vec3(4.0 * cos(currentFrame), 4.0f, 4.0 * sin(currentFrame));
+//        ourShader.setVec3("pointLight.position", pointLight.position);
+//        ourShader.setVec3("pointLight.ambient", pointLight.ambient);
+//        ourShader.setVec3("pointLight.diffuse", pointLight.diffuse);
+//        ourShader.setVec3("pointLight.specular", pointLight.specular);
+//        ourShader.setFloat("pointLight.constant", pointLight.constant);
+//        ourShader.setFloat("pointLight.linear", pointLight.linear);
+//        ourShader.setFloat("pointLight.quadratic", pointLight.quadratic);
+//        ourShader.setVec3("viewPosition", programState->camera.Position);
+//        ourShader.setFloat("material.shininess", 32.0f);
         // view/projection transformations
         glm::mat4 projection = glm::perspective(glm::radians(programState->camera.Zoom),
                                                 (float) SCR_WIDTH / (float) SCR_HEIGHT, 0.1f, 600.0f);
         glm::mat4 view = programState->camera.GetViewMatrix();
-        ourShader.setMat4("projection", projection);
-        ourShader.setMat4("view", view);
+//        ourShader.setMat4("projection", projection);
+//        ourShader.setMat4("view", view);
 
         // render the loaded model
-        glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model,
-                               programState->backpackPosition); // translate it down so it's at the center of the scene
-//        model = glm::rotate(model,(float)glfwGetTime()*10.0f,glm::vec3(0.0f,0.0f,1.0f));
-        model = glm::scale(model, glm::vec3(programState->backpackScale));    // it's a bit too big for our scene, so scale it down
-        ourShader.setMat4("model", model);
-        ourModel.Draw(ourShader);
+//        glm::mat4 model = glm::mat4(1.0f);
+//        model = glm::translate(model,
+//                               programState->backpackPosition); // translate it down so it's at the center of the scene
+////        model = glm::rotate(model,(float)glfwGetTime()*10.0f,glm::vec3(0.0f,0.0f,1.0f));
+//        model = glm::scale(model, glm::vec3(programState->backpackScale));    // it's a bit too big for our scene, so scale it down
+//        ourShader.setMat4("model", model);
+//        ourModel.Draw(ourShader);
 
-        warehouse.setup(projection,view);
+        light.setup(projection,view);
+
+        warehouse.setup(projection,view,programState->camera.Position);
         warehouse.draw();
+
+        light.translate(scaling*(glm::vec3(30.0f,0.0f,-30.0f)+translated));
+        light.scale(glm::vec3(5.0f,10.0f,1.0f));
+        light.draw();
+
+        light.translate(scaling*(glm::vec3(0.0f,15.0f,-30.0f+(60.0f*1/3))+translated));
+        light.scale(glm::vec3(10.0f,5.0f,1.0f));
+        light.draw();
+
+        light.translate(scaling*(glm::vec3(-60.0f*1/3,15.0f,-30.0f)+translated));
+        light.scale(glm::vec3(10.0f,5.0f,1.0f));
+        light.draw();
+
+        light.translate(scaling*(glm::vec3(60.0f*1/6*1/2+15.0f,15.0f,-50.0f)+translated));
+        light.scale(glm::vec3(10.0f,5.0f,1.0f));
+        light.draw();
+
+
+        light.translate(scaling*(glm::vec3(60.0f*1/6*1/2-15.0f,15.0f,-50.0f)+translated));
+        light.scale(glm::vec3(10.0f,5.0f,1.0f));
+        light.draw();
+
+        c1.setup(projection,view,programState->camera.Position);
+
+//        c1.translate(glm::vec3(0.0f,-10.0f,20.0f));
+//        c1.scale(glm::vec3(10.0f,10.0f,10.0f));
+//        c1.draw();
+        c1.translate(glm::vec3(4.0f,2.0f,4.0f)*(glm::vec3(60.0f*1/6*1/2,-10.0f,-30.0f-(60.0f*1/6*1/2))+glm::vec3(0.0f,0.0f,20.0f)));
+        c1.scale(glm::vec3(10.0f,10.0f,10.0f));
+        c1.draw();
 
         if (programState->ImGuiEnabled)
             DrawImGui(programState);

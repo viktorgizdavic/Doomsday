@@ -17,13 +17,13 @@ private:
     float yScaling=2.0f;
     float zScaling=4.0f;
 public:
-    Room(std::string texturePath,std::string doorTexturePath):rect(texturePath),door(doorTexturePath)
+    Room(std::string texturePath,std::string specularMapPath,std::string doorTexturePath,std::string doorSpecularMapPath):rect(texturePath,specularMapPath),door(doorTexturePath,doorSpecularMapPath)
     {}
 
-    void setup(glm::mat4 projection,glm::mat4 view)
+    void setup(glm::mat4 projection,glm::mat4 view,glm::vec3 viewPos)
     {
-        rect.setup(projection,view);
-        door.setup(projection,view);
+        rect.setup(projection,view,viewPos);
+        door.setup(projection,view,viewPos);
     }
 
     void draw()
@@ -32,10 +32,6 @@ public:
         glm::vec3 roomScaling(xScaling,yScaling,zScaling);
         glm::vec3 roomScalingVertical(xScaling,zScaling,yScaling);
         glm::vec3 roomTranslate(xTranslate,yTranslate,zTranslate);
-
-//        rect.translate(roomScaling*(glm::vec3(0.0f,0.0f,-60.0f)+roomTranslate));
-//        rect.scale(roomScaling*glm::vec3(60.0f,30.0f,1.0f));
-//        rect.draw();
 
 
         //wall with door
