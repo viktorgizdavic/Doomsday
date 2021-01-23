@@ -99,8 +99,8 @@ public:
         rotationVect=glm::rotate(rotationVect,glm::radians(angle),vector);
     }
 
-    glm::mat4 rotate() {
-        position*=rotationVect;
+    void rotate() {
+        position *= rotationVect;
     }
 
     void scale(glm::vec3 vector)
