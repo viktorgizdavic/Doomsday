@@ -130,7 +130,7 @@ private:
         // calculate the projection of the front vector to XZ-plane
         // used for land movement instead of front vector
 
-        front.y = 0.0f;  // y-axis is fixed, and it's the plane in which the player moves
+        front.y = 0.0f;  // y-axis is fixed
         movementDir = glm::normalize(front);
     }
 };

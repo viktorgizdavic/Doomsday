@@ -17,6 +17,7 @@ public:
     void gameTick(float dt, glm::mat4 projection, glm::mat4 view);
     void levelLogic();
     void addMoveable(MoveableObject*);
+    void shoot(glm::vec3 position, glm::vec3 direction);
 private:
     // an array of all objects which update over time
     // for example: bullets, zombies
@@ -27,6 +28,9 @@ private:
     float previousTick = 0;
     float tickSec = 0.016; // update every 16 ms
     unsigned secondsCounter = 0;
+
+    float fireRate = 0.2;
+    float previousFire = 0;
 };
 
 

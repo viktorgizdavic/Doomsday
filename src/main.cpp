@@ -62,12 +62,15 @@ struct ProgramState {
     glm::vec3 clearColor = glm::vec3(0);
     bool ImGuiEnabled = false;
     Camera camera;
+    Game game;
     bool CameraMouseMovementUpdateEnabled = true;
     glm::vec3 backpackPosition = glm::vec3(0.0f, -10.0f, 0.0f);
     float backpackScale = 1.0f;
     PointLight pointLight;
     ProgramState()
-            : camera(glm::vec3(0.0f, -10.0f, 3.0f)) {}
+            : camera(glm::vec3(0.0f, -10.0f, 3.0f)),
+              game(Game())
+            {}
 
     void SaveToFile(std::string filename);
 
@@ -261,14 +264,15 @@ int main() {
     // draw in wireframe
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-    Game* game = new Game();
-    auto testObject1 = new MoveableObject(glm::vec3 (0.0f), glm::vec3 (0.01f, 0.0f, 0.0f), 10.0f, 5.0f);
-    testObject1->setShow(true);
-    game->addMoveable(testObject1);
+    //Game* game = new Game();
+    auto testZombie = new MoveableObject(glm::vec3 (0.0f), glm::vec3 (0.01f, 0.0f, 0.0f), 10.0f, 5.0f, 2, "green");
+    testZombie->setShow(true);
+    programState->game.addMoveable(testZombie);
 
-    auto testObject2 = new MoveableObject(glm::vec3 (60.0f, 0.0f, 0.0f), glm::vec3 (-0.01f, 0.0f, 0.0f), 10.0f, 20.0f);
-    testObject2->setShow(true);
-    game->addMoveable(testObject2);
+    auto testWall = new MoveableObject(glm::vec3 (60.0f, 0.0f, 0.0f), glm::vec3 (-0.01f, 0.0f, 0.0f), 10.0f, 20.0f, 3, "blue");
+    testWall->setShow(true);
+    testWall->setMove(false);
+    programState->game.addMoveable(testWall);
 
 
     // render loop
@@ -321,7 +325,7 @@ int main() {
 //        ourShader.setMat4("model", model);
 //        ourModel.Draw(ourShader);
 
-        game->gameTick(deltaTime, projection, view);
+        programState->game.gameTick(deltaTime, projection, view);
 
         light.setup(projection,view);
 
@@ -369,8 +373,6 @@ int main() {
         glfwPollEvents();
     }
 
-    delete game;
-
     programState->SaveToFile("resources/program_state.txt");
     delete programState;
     ImGui_ImplOpenGL3_Shutdown();
@@ -396,6 +398,9 @@ void processInput(GLFWwindow *window) {
         programState->camera.ProcessKeyboard(LEFT, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         programState->camera.ProcessKeyboard(RIGHT, deltaTime);
+
+    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
+        programState->game.shoot(programState->camera.Position, programState->camera.Front);
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes

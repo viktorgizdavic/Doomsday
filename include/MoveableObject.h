@@ -12,18 +12,21 @@
 
 class MoveableObject {
 public:
-    // TODO: create a bounding box alongside the object, and update it as the object moves
-    MoveableObject(glm::vec3 pos, glm::vec3 moveDir, float width, float height);
+    MoveableObject(glm::vec3 pos, glm::vec3 moveDir, float width, float height, unsigned int priority, const std::string& color);
     virtual ~MoveableObject();
     virtual void move();
     void draw(glm::mat4 projection, glm::mat4 view);
-    void setShow(bool value);
+    void setShow(bool value) const;
+    void setMove(bool value);
+    bool checkMove() const;
 
     BoundingBox* hitbox;
     bool shouldDelete;
+    unsigned int priorityLevel;
 private:
     glm::vec3 currentPosition;
     glm::vec3 movementDir;
+    bool canMove = true;
 };
 
 

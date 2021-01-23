@@ -4,16 +4,21 @@
 
 #include "BoundingBox.h"
 
-BoundingBox::BoundingBox(float x, float y, float z, float width, float height)
+BoundingBox::BoundingBox(float x, float y, float z, float width, float height, const std::string& color)
         : shouldShow(false), x(x), y(y), z(z), width(width), height(height)
 {
-    boxVisual = new LightCube(glm::vec3(1.0f, 0.0f, 0.0f));
-    minX = x - width/2;
-    maxX = x + width/2;
-    minY = y - height/2;
-    maxY = y + height/2;
-    minZ = z - width/2;
-    maxZ = z + width/2;
+    glm::vec3 c = glm::vec3(0.5f, 0.0f, 0.0f);
+    if(color == "green")
+        c = glm::vec3(0.0f, 0.5f, 0.0f);
+    else if (color == "blue")
+        c = glm::vec3(0.0f, 0.0f, 0.5f);
+    boxVisual = new LightCube(c);
+    minX = x - width/4;
+    maxX = x + width/4;
+    minY = y - height/4;
+    maxY = y + height/4;
+    minZ = z - width/4;
+    maxZ = z + width/4;
 }
 
 BoundingBox::~BoundingBox() {

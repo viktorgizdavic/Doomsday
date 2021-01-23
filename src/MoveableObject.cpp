@@ -4,10 +4,10 @@
 #include <iostream>
 #include "MoveableObject.h"
 
-MoveableObject::MoveableObject(glm::vec3 pos, glm::vec3 moveDir, float width, float height)
-    : shouldDelete(false), currentPosition(pos), movementDir(moveDir)
+MoveableObject::MoveableObject(glm::vec3 pos, glm::vec3 moveDir, float width, float height, unsigned int priority, const std::string& color)
+    : shouldDelete(false), priorityLevel(priority), currentPosition(pos), movementDir(moveDir)
 {
-    hitbox = new BoundingBox(pos.x, pos.y, pos.z, width, height);
+    hitbox = new BoundingBox(pos.x, pos.y, pos.z, width, height, color);
 }
 
 MoveableObject::~MoveableObject() {
@@ -23,7 +23,7 @@ void MoveableObject::draw(glm::mat4 projection, glm::mat4 view) {
     }
 }
 
-void MoveableObject::setShow(bool value) {
+void MoveableObject::setShow(bool value) const {
     hitbox->shouldShow = value;
 }
 
@@ -35,5 +35,13 @@ void MoveableObject::move() {
             newPos.z - currentPosition.z
     );
     currentPosition = newPos;
+}
+
+void MoveableObject::setMove(bool value) {
+    canMove = value;
+}
+
+bool MoveableObject::checkMove() const {
+    return canMove;
 }
 

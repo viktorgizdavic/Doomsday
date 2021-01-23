@@ -9,7 +9,7 @@
 
 class BoundingBox {
 public:
-    BoundingBox(float x, float y, float z, float width, float height);
+    BoundingBox(float x, float y, float z, float width, float height, const std::string& color);
     ~BoundingBox();
     void updateBox(float xDt, float yDt, float zDt);
     LightCube* getVisual();
