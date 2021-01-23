@@ -225,9 +225,11 @@ int main() {
     Crosshair crosshair (glm::vec3(0.0f,1.0f,0.0f));
     Cube c1 ("resources/textures/container2.png","resources/textures/container2_specular.png");
 
-    Shader rifleshader ("resources/shaders/rectangleObjectShader.vs","resources/shaders/rectangleObjectShader.fs");
-    ModelObject rifle("resources/objects/Model_D0901C27/m4a1_s.obj");
-    ModelObject animeGirl("resources/objects/Model_D0607085/D0607085.obj");
+    ModelObject rifle("resources/objects/Model_C0811038/M4.obj");
+    ModelObject animeGirl("resources/objects/Model_D0306021/D0306021.obj");
+    ModelObject forklift("resources/objects/Forklift/Forklift.obj");
+    ModelObject bullet("resources/objects/Model_C0811054/AR Bullet.obj");
+    ModelObject zombie("resources/objects/Zombie Pack/zombie_normal.obj");
 
     // draw in wireframe
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -256,35 +258,13 @@ int main() {
         glClearColor(programState->clearColor.r, programState->clearColor.g, programState->clearColor.b, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-//        crosshair.draw();
-
-        // don't forget to enable shader before setting uniforms
-//        ourShader.use();
-//        pointLight.position = glm::vec3(4.0 * cos(currentFrame), 4.0f, 4.0 * sin(currentFrame));
-//        ourShader.setVec3("pointLight.position", pointLight.position);
-//        ourShader.setVec3("pointLight.ambient", pointLight.ambient);
-//        ourShader.setVec3("pointLight.diffuse", pointLight.diffuse);
-//        ourShader.setVec3("pointLight.specular", pointLight.specular);
-//        ourShader.setFloat("pointLight.constant", pointLight.constant);
-//        ourShader.setFloat("pointLight.linear", pointLight.linear);
-//        ourShader.setFloat("pointLight.quadratic", pointLight.quadratic);
-//        ourShader.setVec3("viewPosition", programState->camera.Position);
-//        ourShader.setFloat("material.shininess", 32.0f);
         // view/projection transformations
         glm::mat4 projection = glm::perspective(glm::radians(programState->camera.Zoom),
                                                 (float) SCR_WIDTH / (float) SCR_HEIGHT, 0.1f, 600.0f);
         glm::mat4 view = programState->camera.GetViewMatrix();
-//        ourShader.setMat4("projection", projection);
-//        ourShader.setMat4("view", view);
 
-        // render the loaded model
-//        glm::mat4 model = glm::mat4(1.0f);
-//        model = glm::translate(model,
-//                               programState->backpackPosition); // translate it down so it's at the center of the scene
-////        model = glm::rotate(model,(float)glfwGetTime()*10.0f,glm::vec3(0.0f,0.0f,1.0f));
-//        model = glm::scale(model, glm::vec3(programState->backpackScale));    // it's a bit too big for our scene, so scale it down
-//        ourShader.setMat4("model", model);
-//        ourModel.Draw(ourShader);
+
+
 
         programState->game.gameTick(deltaTime, projection, view);
 
@@ -323,18 +303,37 @@ int main() {
         c1.scale(glm::vec3(10.0f,10.0f,10.0f));
         c1.draw();
 
-        rifle.setup(rifleshader,glm::mat4(1.0f),glm::mat4(1.0f),programState->camera.Position,dirLight,pointLights,spotLight);
+        rifle.setup(generalShader,glm::mat4(1.0f),glm::mat4(1.0f),programState->camera.Position,dirLight,pointLights,spotLight);
 
-        rifle.translate(glm::vec3(1.0f,-0.6f,0.5f));
-        rifle.rotate(-40.0f,glm::vec3(0.0f,1.0f,0.0f));
-        rifle.rotate(-20.0f,glm::vec3(1.0f,0.0f,0.0f));
-        rifle.scale(glm::vec3(0.06f,0.05f,0.03f));
-        rifle.draw(rifleshader);
+        rifle.translate(glm::vec3(0.5f,-0.7f,0.5f));
+        rifle.rotate(-30.0f,glm::vec3(0.0f,1.0f,0.0f));
+        rifle.rotate(-10.0f,glm::vec3(1.0f,0.0f,0.0f));
+        rifle.scale(glm::vec3(0.3f,0.3f,0.2f));
+        rifle.draw(generalShader);
+
+
 
         animeGirl.setup(generalShader,projection,view,programState->camera.Position,dirLight,pointLights,spotLight);
-        animeGirl.translate(glm::vec3(0.0f,-27.0f,10.0f));
-        animeGirl.scale(glm::vec3(2.5f,2.0f,2.5f));
+        animeGirl.translate(glm::vec3(0.0f,-30.0f,-10.0f));
+        animeGirl.scale(glm::vec3(1.0f,1.0f,1.0f));
         animeGirl.draw(generalShader);
+
+        bullet.setup(generalShader,projection,view,programState->camera.Position,dirLight,pointLights,spotLight);
+        bullet.translate(glm::vec3(15.0f,0.0f,-15.0f));
+        bullet.rotate(90.0f,glm::vec3(1.0f,0.0f,0.0f));
+        bullet.scale(glm::vec3(0.25f,0.25f,0.25f));
+        bullet.draw(generalShader);
+
+        forklift.setup(generalShader,projection,view,programState->camera.Position,dirLight,pointLights,spotLight);
+        forklift.translate(glm::vec3(-20.0f,-30.0f,-10.0f));
+        forklift.scale(glm::vec3(5.0f,5.0f,5.0f));
+        forklift.draw(generalShader);
+
+        zombie.setup(generalShader,projection,view,programState->camera.Position,dirLight,pointLights,spotLight);
+        zombie.translate(glm::vec3(30.0f,-25.0f,30.0f));
+        zombie.rotate(-90.0f,glm::vec3(0.0f,0.0f,1.0f));
+        zombie.scale(glm::vec3(15.0f,15.0f,15.0f));
+        zombie.draw(generalShader);
 
         crosshair.draw();
 
