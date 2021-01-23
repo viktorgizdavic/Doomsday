@@ -8,11 +8,20 @@
 // this class is to be extended by all updateable objects
 // example: bullets
 
+#include "BoundingBox.h"
+
 class MoveableObject {
 public:
     // TODO: create a bounding box alongside the object, and update it as the object moves
-    MoveableObject();
-    void update();
+    MoveableObject(glm::vec3 pos, glm::vec3 moveDir, float width, float height);
+    virtual ~MoveableObject();
+    virtual void move();
+    void draw(glm::mat4 projection, glm::mat4 view);
+    void setShow(bool value);
+    BoundingBox* hitbox;
+private:
+    glm::vec3 currentPosition;
+    glm::vec3 movementDir;
 };
 
 

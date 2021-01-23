@@ -262,8 +262,14 @@ int main() {
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
     Game* game = new Game();
-    MoveableObject* testObject = new MoveableObject();
-    game->addMoveable(testObject);
+    auto testObject1 = new MoveableObject(glm::vec3 (0.0f), glm::vec3 (0.01f, 0.0f, 0.0f), 10.0f, 5.0f);
+    testObject1->setShow(true);
+    game->addMoveable(testObject1);
+
+    auto testObject2 = new MoveableObject(glm::vec3 (60.0f, 0.0f, 0.0f), glm::vec3 (-0.01f, 0.0f, 0.0f), 10.0f, 20.0f);
+    testObject2->setShow(true);
+    game->addMoveable(testObject2);
+
 
     // render loop
     // -----------
@@ -274,8 +280,6 @@ int main() {
         float currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
-
-        game->gameTick(deltaTime);
 
         // input
         // -----
@@ -316,6 +320,8 @@ int main() {
 //        model = glm::scale(model, glm::vec3(programState->backpackScale));    // it's a bit too big for our scene, so scale it down
 //        ourShader.setMat4("model", model);
 //        ourModel.Draw(ourShader);
+
+        game->gameTick(deltaTime, projection, view);
 
         light.setup(projection,view);
 

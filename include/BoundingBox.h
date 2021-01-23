@@ -5,20 +5,29 @@
 #ifndef DOOMSDAY_BOUNDINGBOX_H
 #define DOOMSDAY_BOUNDINGBOX_H
 
+#include "LightCube.h"
 
 class BoundingBox {
 public:
-    BoundingBox(int minX, int maxX, int minY, int maxY, int minZ, int maxZ);
-    void updateBox(int xDt, int yDt, int zDt);
+    BoundingBox(float x, float y, float z, float width, float height);
+    ~BoundingBox();
+    void updateBox(float xDt, float yDt, float zDt);
+    LightCube* getVisual();
 
     // checks if two boxes intersect
     static bool boxesIntersect(BoundingBox& box1, BoundingBox& box2);
     // checks if a point with (x,y,z) coords is inside a box
-    static bool pointBoxIntersect(int pointX, int pointY, int pointZ, BoundingBox& box);
+    static bool pointBoxIntersect(float pointX, float pointY, float pointZ, BoundingBox& box);
+
+    bool shouldShow;
+    float width, height;
 private:
-    int minX, maxX;
-    int minY, maxY;
-    int minZ, maxZ;
+    float minX, maxX;
+    float minY, maxY;
+    float minZ, maxZ;
+    float x, y, z;
+
+    LightCube* boxVisual;
 };
 
 

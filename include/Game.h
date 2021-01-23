@@ -14,7 +14,7 @@ public:
     Game() = default;
     ~Game();
 
-    void gameTick(float dt);
+    void gameTick(float dt, glm::mat4 projection, glm::mat4 view);
     void levelLogic();
     void addMoveable(MoveableObject*);
 private:

@@ -5,16 +5,31 @@
 #include <iostream>
 #include "Game.h"
 
-void Game::gameTick(float dt) {
+void Game::gameTick(float dt, glm::mat4 projection, glm::mat4 view) {
     timeElapsed += dt;
-    if((timeElapsed-previousTick) >= tickSec) {
-        previousTick = timeElapsed;
-
-        //every tick, call update for all objects in objArray
-        for(auto &p: objArray) {
-            p->update();
+    bool tickUpdate = (timeElapsed-previousTick) >= tickSec;
+    for(auto p = objArray.begin(); p != objArray.end(); ++p) {
+        // tick the movement and check for collisions
+        // TODO: complexity is O(n^2) at the moment, find a better way to do this
+        if(tickUpdate) {
+            (*p)->move();
+            auto other = objArray.begin();
+            while(other != objArray.end()) {
+                if(p != other) {
+                    if(BoundingBox::boxesIntersect(*(*p)->hitbox, *(*other)->hitbox)) {
+                        std::cout << "object collision" << std::endl;
+                        /*delete *other;
+                        objArray.erase(other);*/
+                    }
+                }
+                other++;
+            }
         }
+
+        // we have to redraw them every render loop iteration
+        (*p)->draw(projection, view);
     }
+
     if((timeElapsed - logicTick) >= 1) {
         logicTick = timeElapsed;
         levelLogic();
