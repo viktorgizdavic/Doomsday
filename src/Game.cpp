@@ -16,15 +16,19 @@ void Game::gameTick(float dt, glm::mat4 projection, glm::mat4 view) {
         // tick the movement and check for collisions
         // TODO: complexity is O(n^2) at the moment, find a better way to do this
         if(tickUpdate && (*p)->checkMove()) {
-            (*p)->move();
-            auto other = objArray.begin();
-            for(; other != objArray.end(); ++other) {
-                if((*other)->shouldDelete) continue;
-                if(p != other) {
-                    if((*p)->priorityLevel >= (*other)->priorityLevel) continue;
-                    if(BoundingBox::boxesIntersect(*(*p)->hitbox, *(*other)->hitbox)) {
-                        std::cout << "object collision" << std::endl;
-                        (*p)->shouldDelete = true;
+            MoveableObject* bumpedObj = moveLookahead(*p);
+            if(bumpedObj == nullptr) {
+                (*p)->move();
+            }
+            else {
+                if((*p)->priorityLevel == 0) {
+                    (*p)->shouldDelete = true;
+                    if(bumpedObj->priorityLevel == 2) {
+                        bumpedObj->health -= 40;
+                        if(bumpedObj->health <= 0) {
+                            bumpedObj->shouldDelete = true;
+                            std::cout << "Killed zombie" << std::endl;
+                        }
                     }
                 }
             }
@@ -32,6 +36,14 @@ void Game::gameTick(float dt, glm::mat4 projection, glm::mat4 view) {
 
         // we have to redraw them every render loop iteration
         (*p)->draw(projection, view);
+        if((*p)->life) {
+            if((*p)->lifespan <= 0) {
+                (*p)->shouldDelete = true;
+                continue;
+            } else {
+                (*p)->lifespan -= dt;
+            }
+        }
     }
 
     for(; p!= objArray.end(); ++p) {
@@ -50,14 +62,25 @@ void Game::gameTick(float dt, glm::mat4 projection, glm::mat4 view) {
 void Game::levelLogic() {
     // this function ticks every second, easier to work with for spawning etc
     secondsCounter++;
-    std::cout << "seconds: " << secondsCounter << std::endl;
-    switch(secondsCounter) {
-        case 5: {
-            // spawn a zombie or something
-            // don't forget to add it to objArray
+    if(secondsCounter == 5) {
+        auto testZombie = new MoveableObject(glm::vec3 (0.0f, -15.0f, -150.0f), glm::vec3 (0.0f, 0.0f, 0.0f), 15.0f, 50.0f, 15.0f, 2, "green");
+        testZombie->setShow(true);
+        addMoveable(testZombie);
+    }
+    if(secondsCounter == 10) {
+        auto testZombie = new MoveableObject(glm::vec3 (0.0f, -15.0f, -150.0f), glm::vec3 (0.0f, 0.0f, 0.0f), 15.0f, 50.0f, 15.0f, 2, "blue");
+        testZombie->setShow(true);
+        addMoveable(testZombie);
+    }
+    for(auto &p: objArray) {
+        if(p->priorityLevel == 2) {
+            if (!p->shouldDelete) {
+                p->movementDir = 0.1f * glm::normalize(
+                        glm::vec3(playerObj->currentPosition - p->currentPosition)
+                );
+            }
         }
     }
-
 }
 
 void Game::addMoveable(MoveableObject* mo) {
@@ -72,10 +95,41 @@ Game::~Game() {
 
 void Game::shoot(glm::vec3 position, glm::vec3 direction) {
     if(previousFire <= 0) {
-        float speed = 0.1;
-        auto testBullet = new MoveableObject(position + 5.0f*direction, speed*direction, 0.5f, 0.5f, 1, "red");
+        float speed = 1;
+        auto testBullet = new MoveableObject(position + 5.0f*direction, speed*direction, 0.2f, 0.2f, 0.2f, 0, "red");
         testBullet->setShow(true);
+        testBullet->life = true;
         addMoveable(testBullet);
         previousFire = fireRate;
     }
+}
+
+MoveableObject* Game::moveLookahead(MoveableObject * o) {
+    if(o->shouldDelete) return nullptr;
+
+    // by default it didn't collide with anything
+    MoveableObject* retVal = nullptr;
+    float dx = o->movementDir.x;
+    float dy = o->movementDir.y;
+    float dz = o->movementDir.z;
+
+    // lookahead
+    o->hitbox->updateBox(dx, dy, dz);
+
+    // test for potential collisions
+    for (auto p: objArray) {
+        if(p->shouldDelete) continue;
+        if(p == o) continue;
+        if((o->priorityLevel == 0 && p->priorityLevel == 0) ||
+            (o->priorityLevel == 0 && p->priorityLevel == 1)) continue;
+        //if(o->priorityLevel > p->priorityLevel) continue;
+        if(BoundingBox::boxesIntersect(*(p->hitbox), *(o->hitbox))) {
+            retVal = p;
+            break;
+        }
+    }
+
+    // reset to old values
+    o->hitbox->updateBox(-dx, -dy, -dz);
+    return retVal;
 }

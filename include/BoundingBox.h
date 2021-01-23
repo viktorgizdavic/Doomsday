@@ -9,7 +9,7 @@
 
 class BoundingBox {
 public:
-    BoundingBox(float x, float y, float z, float width, float height, const std::string& color);
+    BoundingBox(float x, float y, float z, float width, float height, float length, const std::string& color);
     ~BoundingBox();
     void updateBox(float xDt, float yDt, float zDt);
     LightCube* getVisual();
@@ -20,7 +20,7 @@ public:
     static bool pointBoxIntersect(float pointX, float pointY, float pointZ, BoundingBox& box);
 
     bool shouldShow;
-    float width, height;
+    float width, height, length;
 private:
     float minX, maxX;
     float minY, maxY;

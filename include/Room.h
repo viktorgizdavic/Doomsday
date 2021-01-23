@@ -5,6 +5,7 @@
 #ifndef DOOMSDAY_ROOM_H
 #define DOOMSDAY_ROOM_H
 #include <RectangleObject.h>
+#include <MoveableObject.h>
 
 class Room {
 private:
@@ -16,6 +17,8 @@ private:
     float xScaling=4.0f;
     float yScaling=2.0f;
     float zScaling=4.0f;
+
+    MoveableObject *wall1 = nullptr, *wall2 = nullptr, *wall3 = nullptr, *wall4 = nullptr, *floor = nullptr, *roof = nullptr;
 public:
     Room(std::string texturePath,std::string specularMapPath,std::string doorTexturePath,std::string doorSpecularMapPath):rect(texturePath,specularMapPath),door(doorTexturePath,doorSpecularMapPath)
     {}
@@ -24,6 +27,38 @@ public:
     {
         rect.setup(projection,view,viewPos,dirLight,pointLights,spotLight);
         door.setup(projection,view,viewPos,dirLight,pointLights,spotLight);
+    }
+
+    void buildHitboxes(Game* game) {
+        wall1 = new MoveableObject(glm::vec3 (120.0f, 0.0f, -40.0f), glm::vec3 (0.0f, 0.0f, 0.0f), 5.0f, 30.0f*4, 60.0f*8, 3, "blue");
+        wall1->setShow(false);
+        wall1->setMove(false);
+        game->addMoveable(wall1);
+
+        wall2 = new MoveableObject(glm::vec3 (-120.0f, 0.0f, -40.0f), glm::vec3 (0.0f, 0.0f, 0.0f), 5.0f, 30.0f*4, 60.0f*8, 3, "blue");
+        wall2->setShow(false);
+        wall2->setMove(false);
+        game->addMoveable(wall2);
+
+        wall3 = new MoveableObject(glm::vec3 (0.0f, 0.0f, -160.0f), glm::vec3 (0.0f, 0.0f, 0.0f), 60.0f*8, 30.0f*4, 5.0f, 3, "blue");
+        wall3->setShow(false);
+        wall3->setMove(false);
+        game->addMoveable(wall3);
+
+        wall4 = new MoveableObject(glm::vec3 (0.0f, 0.0f, 80.0f), glm::vec3 (0.0f, 0.0f, 0.0f), 60.0f*8, 30.0f*4, 5.0f, 3, "blue");
+        wall4->setShow(false);
+        wall4->setMove(false);
+        game->addMoveable(wall4);
+
+        floor = new MoveableObject(glm::vec3 (0, 30.0f, -40.0f), glm::vec3 (0.0f, 0.0f, 0.0f), 60.0f*8, 5.0f, 60.0f*8, 3, "blue");
+        floor->setShow(false);
+        floor->setMove(false);
+        game->addMoveable(floor);
+
+        roof = new MoveableObject(glm::vec3 (0, -30.0f, -40.0f), glm::vec3 (0.0f, 0.0f, 0.0f), 60.0f*8, 5.0f, 60.0f*8, 3, "blue");
+        roof->setShow(false);
+        roof->setMove(false);
+        game->addMoveable(roof);
     }
 
     void draw()

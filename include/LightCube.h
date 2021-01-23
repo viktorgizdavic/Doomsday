@@ -12,7 +12,7 @@
 
 //#include <learnopengl/filesystem.h>
 #include <learnopengl/shader.h>
-#include <learnopengl/camera.h>
+//#include <learnopengl/camera.h>
 
 #define attrCount 6*3*6
 

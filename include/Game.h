@@ -18,6 +18,9 @@ public:
     void levelLogic();
     void addMoveable(MoveableObject*);
     void shoot(glm::vec3 position, glm::vec3 direction);
+    MoveableObject* moveLookahead(MoveableObject*);
+
+    MoveableObject* playerObj;
 private:
     // an array of all objects which update over time
     // for example: bullets, zombies

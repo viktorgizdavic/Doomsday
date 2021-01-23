@@ -4,8 +4,8 @@
 
 #include "BoundingBox.h"
 
-BoundingBox::BoundingBox(float x, float y, float z, float width, float height, const std::string& color)
-        : shouldShow(false), x(x), y(y), z(z), width(width), height(height)
+BoundingBox::BoundingBox(float x, float y, float z, float width, float height, float length, const std::string& color)
+        : shouldShow(false), x(x), y(y), z(z), width(width), height(height), length(length)
 {
     glm::vec3 c = glm::vec3(0.5f, 0.0f, 0.0f);
     if(color == "green")
@@ -17,8 +17,8 @@ BoundingBox::BoundingBox(float x, float y, float z, float width, float height, c
     maxX = x + width/4;
     minY = y - height/4;
     maxY = y + height/4;
-    minZ = z - width/4;
-    maxZ = z + width/4;
+    minZ = z - length/4;
+    maxZ = z + length/4;
 }
 
 BoundingBox::~BoundingBox() {

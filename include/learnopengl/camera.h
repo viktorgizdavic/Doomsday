@@ -6,6 +6,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include <vector>
+#include <Game.h>
 
 // Defines several possible options for camera movement. Used as abstraction to stay away from window-system specific input methods
 enum Camera_Movement {
@@ -68,17 +69,47 @@ public:
     }
 
     // processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
-    void ProcessKeyboard(Camera_Movement direction, float deltaTime)
+    void ProcessKeyboard(Camera_Movement direction, float deltaTime, Game& g)
     {
         float velocity = MovementSpeed * deltaTime;
-        if (direction == FORWARD)
-            Position += movementDir * velocity;
-        if (direction == BACKWARD)
-            Position -= movementDir * velocity;
-        if (direction == LEFT)
-            Position -= Right * velocity;
-        if (direction == RIGHT)
-            Position += Right * velocity;
+        auto player = g.playerObj;
+
+        if (direction == FORWARD) {
+            player->movementDir = movementDir * velocity;
+            auto o = g.moveLookahead(player);
+            if(!o) {
+                Position += movementDir * velocity;
+                player->move();
+                player->movementDir = glm::vec3(0.0f);
+            }
+        }
+        if (direction == BACKWARD){
+            player->movementDir = -movementDir * velocity;
+            auto o = g.moveLookahead(player);
+            if(!o) {
+                    Position -= movementDir * velocity;
+                player->move();
+                player->movementDir = glm::vec3(0.0f);
+            }
+        }
+        if (direction == LEFT) {
+            player->movementDir = -Right * velocity;
+            auto o = g.moveLookahead(player);
+            if(!o) {
+                Position -= Right * velocity;
+                player->move();
+                player->movementDir = glm::vec3(0.0f);
+            }
+        }
+        if (direction == RIGHT){
+            player->movementDir = Right * velocity;
+            auto o = g.moveLookahead(player);
+            if(!o) {
+                Position += Right * velocity;
+                player->move();
+                player->movementDir = glm::vec3(0.0f);
+            }
+        }
     }
 
     // processes input received from a mouse input system. Expects the offset value in both the x and y direction.

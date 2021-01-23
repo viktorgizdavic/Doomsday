@@ -12,7 +12,7 @@
 
 class MoveableObject {
 public:
-    MoveableObject(glm::vec3 pos, glm::vec3 moveDir, float width, float height, unsigned int priority, const std::string& color);
+    MoveableObject(glm::vec3 pos, glm::vec3 moveDir, float width, float height, float length, unsigned int priority, const std::string& color);
     virtual ~MoveableObject();
     virtual void move();
     void draw(glm::mat4 projection, glm::mat4 view);
@@ -22,10 +22,13 @@ public:
 
     BoundingBox* hitbox;
     bool shouldDelete;
+    bool life = false;
     unsigned int priorityLevel;
-private:
+    float lifespan = 2.0f;
+    float health = 100;
     glm::vec3 currentPosition;
     glm::vec3 movementDir;
+private:
     bool canMove = true;
 };
 

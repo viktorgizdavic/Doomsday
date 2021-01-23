@@ -213,35 +213,28 @@ int main() {
 
     // build and compile shaders
     // -------------------------
-    Shader ourShader("resources/shaders/2.model_lighting.vs", "resources/shaders/2.model_lighting.fs");
+    //Shader ourShader("resources/shaders/2.model_lighting.vs", "resources/shaders/2.model_lighting.fs");
 //    Shader wallShader("resources/shaders/rectangleObjectShader.vs","resources/shaders/rectangleObjectShader.fs");
 
 //    RectangleObject rect("resources/textures/container.jpg");
     Shader generalShader("resources/shaders/rectangleObjectShader.vs","resources/shaders/rectangleObjectShader.fs");
     Room warehouse ("resources/textures/brickwall.jpg","resources/textures/brickwall.jpg","resources/textures/window.png","resources/textures/window.png");
+    warehouse.buildHitboxes(&programState->game);
+
     LightCube light(glm::vec3(1.0f));
     Crosshair crosshair (glm::vec3(0.0f,1.0f,0.0f));
     Cube c1 ("resources/textures/container2.png","resources/textures/container2_specular.png");
 
     Shader rifleshader ("resources/shaders/rectangleObjectShader.vs","resources/shaders/rectangleObjectShader.fs");
     ModelObject rifle("resources/objects/Model_D0901C27/m4a1_s.obj");
-//    ModelObject animeGirl("resources/objects/Model_D0307021/D0307021.obj");
     ModelObject animeGirl("resources/objects/Model_D0607085/D0607085.obj");
-//    animeGirl.SetShaderTextureNamePrefix("material.");
 
     // draw in wireframe
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-    //Game* game = new Game();
-    auto testZombie = new MoveableObject(glm::vec3 (0.0f), glm::vec3 (0.01f, 0.0f, 0.0f), 10.0f, 5.0f, 2, "green");
-    testZombie->setShow(true);
-    programState->game.addMoveable(testZombie);
-
-    auto testWall = new MoveableObject(glm::vec3 (60.0f, 0.0f, 0.0f), glm::vec3 (-0.01f, 0.0f, 0.0f), 10.0f, 20.0f, 3, "blue");
-    testWall->setShow(true);
-    testWall->setMove(false);
-    programState->game.addMoveable(testWall);
-
+    programState->game.playerObj = new MoveableObject(glm::vec3(programState->camera.Position.x, programState->camera.Position.y - 5, programState->camera.Position.z), glm::vec3 (0.0f), 10.0f, 20.0f, 10.0f, 1, "red");
+    programState->game.addMoveable(programState->game.playerObj);
+    programState->game.playerObj->setShow(false);
 
     // render loop
     // -----------
@@ -339,7 +332,6 @@ int main() {
         rifle.draw(rifleshader);
 
         animeGirl.setup(generalShader,projection,view,programState->camera.Position,dirLight,pointLights,spotLight);
-
         animeGirl.translate(glm::vec3(0.0f,-27.0f,10.0f));
         animeGirl.scale(glm::vec3(2.5f,2.0f,2.5f));
         animeGirl.draw(generalShader);
@@ -373,13 +365,13 @@ void processInput(GLFWwindow *window) {
         glfwSetWindowShouldClose(window, true);
 
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        programState->camera.ProcessKeyboard(FORWARD, deltaTime);
+        programState->camera.ProcessKeyboard(FORWARD, deltaTime, programState->game);
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        programState->camera.ProcessKeyboard(BACKWARD, deltaTime);
+        programState->camera.ProcessKeyboard(BACKWARD, deltaTime, programState->game);
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        programState->camera.ProcessKeyboard(LEFT, deltaTime);
+        programState->camera.ProcessKeyboard(LEFT, deltaTime, programState->game);
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        programState->camera.ProcessKeyboard(RIGHT, deltaTime);
+        programState->camera.ProcessKeyboard(RIGHT, deltaTime, programState->game);
 
     if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
         programState->game.shoot(programState->camera.Position, programState->camera.Front);
