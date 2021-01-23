@@ -21,6 +21,7 @@
 #include <Room.h>
 #include <Cube.h>
 #include <LightCube.h>
+#include <crosshair.h>
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 
@@ -172,9 +173,10 @@ int main() {
 
 //    RectangleObject rect("resources/textures/container.jpg");
 
-    Room warehouse ("resources/textures/container.jpg","resources/textures/container.jpg","resources/textures/awesomeface.png","resources/textures/awesomeface.png");
+    Room warehouse ("resources/textures/brickwall.jpg","resources/textures/brickwall.jpg","resources/textures/window.png","resources/textures/window.png");
     LightCube light(glm::vec3(1.0f));
-    Cube c1 ("resources/textures/container.jpg","resources/textures/container.jpg");
+    Crosshair crosshair (glm::vec3(0.0f,1.0f,0.0f));
+    Cube c1 ("resources/textures/container2.png","resources/textures/container2_specular.png");
 //    //build wall
 //    float wallVertices[] = {
 //            // positions         // texture coords
@@ -285,6 +287,7 @@ int main() {
         glClearColor(programState->clearColor.r, programState->clearColor.g, programState->clearColor.b, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+//        crosshair.draw();
 
         // don't forget to enable shader before setting uniforms
 //        ourShader.use();
@@ -348,6 +351,8 @@ int main() {
         c1.translate(glm::vec3(4.0f,2.0f,4.0f)*(glm::vec3(60.0f*1/6*1/2,-10.0f,-30.0f-(60.0f*1/6*1/2))+glm::vec3(0.0f,0.0f,20.0f)));
         c1.scale(glm::vec3(10.0f,10.0f,10.0f));
         c1.draw();
+
+        crosshair.draw();
 
         if (programState->ImGuiEnabled)
             DrawImGui(programState);

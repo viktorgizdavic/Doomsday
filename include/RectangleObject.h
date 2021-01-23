@@ -203,8 +203,8 @@ public:
         rectShader.setVec3("spotLight.diffuse", 1.0f, 1.0f, 1.0f);
         rectShader.setVec3("spotLight.specular", 1.0f, 1.0f, 1.0f);
         rectShader.setFloat("spotLight.constant", 1.0f);
-        rectShader.setFloat("spotLight.linear", 0.004);
-        rectShader.setFloat("spotLight.quadratic", 0.0016);
+        rectShader.setFloat("spotLight.linear", 0.002);
+        rectShader.setFloat("spotLight.quadratic", 0.0008);
         rectShader.setFloat("spotLight.cutOff", glm::cos(glm::radians(30.0f)));
         rectShader.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(45.0f)));
     }

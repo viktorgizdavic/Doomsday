@@ -212,8 +212,8 @@ public:
         cubeShader.setVec3("spotLight.diffuse", 1.0f, 1.0f, 1.0f);
         cubeShader.setVec3("spotLight.specular", 1.0f, 1.0f, 1.0f);
         cubeShader.setFloat("spotLight.constant", 1.0f);
-        cubeShader.setFloat("spotLight.linear", 0.004);
-        cubeShader.setFloat("spotLight.quadratic", 0.0016);
+        cubeShader.setFloat("spotLight.linear", 0.002);
+        cubeShader.setFloat("spotLight.quadratic", 0.0008);
         cubeShader.setFloat("spotLight.cutOff", glm::cos(glm::radians(30.0f)));
         cubeShader.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(45.0f)));
     }

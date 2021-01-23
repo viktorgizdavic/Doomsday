@@ -42,7 +42,7 @@ include_directories(${CMAKE_BINARY_DIR}/configuration)
 
 include_directories(include/)
 add_executable(${PROJECT_NAME}
-        ${SOURCES} include/RectangleObject.h src/Game.cpp include/Game.h src/BoundingBox.cpp include/BoundingBox.h src/MoveableObject.cpp include/MoveableObject.h include/Cube.h include/LightCube.h)
+        ${SOURCES} include/RectangleObject.h src/Game.cpp include/Game.h src/BoundingBox.cpp include/BoundingBox.h src/MoveableObject.cpp include/MoveableObject.h include/Cube.h include/LightCube.h include/crosshair.h)
 
 target_link_libraries(${PROJECT_NAME} ${LIBS})
 
