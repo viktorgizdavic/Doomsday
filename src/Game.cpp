@@ -5,7 +5,7 @@
 #include <iostream>
 #include "Game.h"
 
-void Game::gameTick(float dt, glm::mat4 projection, glm::mat4 view) {
+void Game::gameTick(float dt, glm::mat4 projection, glm::mat4 view, glm::vec3& cameraPosition) {
     timeElapsed += dt;
     previousFire -= dt;
     bool tickUpdate = (timeElapsed-previousTick) >= tickSec;
@@ -35,7 +35,7 @@ void Game::gameTick(float dt, glm::mat4 projection, glm::mat4 view) {
         }
 
         // we have to redraw them every render loop iteration
-        (*p)->draw(projection, view);
+        (*p)->draw(*savedShader, projection, view, cameraPosition, savedDirLight, savedPointLights, savedSpotLight);
         if((*p)->life) {
             if((*p)->lifespan <= 0) {
                 (*p)->shouldDelete = true;
@@ -64,20 +64,34 @@ void Game::levelLogic() {
     secondsCounter++;
     if(secondsCounter == 5) {
         auto testZombie = new MoveableObject(glm::vec3 (0.0f, -15.0f, -150.0f), glm::vec3 (0.0f, 0.0f, 0.0f), 15.0f, 50.0f, 15.0f, 2, "green");
-        testZombie->setShow(true);
+        testZombie->model = zombieModel;
+        //testZombie->setShow(true);
         addMoveable(testZombie);
     }
     if(secondsCounter == 10) {
         auto testZombie = new MoveableObject(glm::vec3 (0.0f, -15.0f, -150.0f), glm::vec3 (0.0f, 0.0f, 0.0f), 15.0f, 50.0f, 15.0f, 2, "blue");
-        testZombie->setShow(true);
+        testZombie->model = zombieModel;
+        //testZombie->setShow(true);
         addMoveable(testZombie);
     }
     for(auto &p: objArray) {
         if(p->priorityLevel == 2) {
             if (!p->shouldDelete) {
-                p->movementDir = 0.1f * glm::normalize(
+                // TODO: rotate the zombie model to face player as it chases them
+                /*glm::vec3 currDir = glm::normalize(
                         glm::vec3(playerObj->currentPosition - p->currentPosition)
                 );
+                glm::vec3 oldDir = glm::normalize(
+                        glm::vec3(playerObj->currentPosition - p->oldPosition)
+                );
+                p->movementDir = 0.1f * currDir;
+                float cos = glm::dot(-currDir, -oldDir);
+                p->model->setRotateVect(glm::degrees(glm::acos(cos)), glm::vec3(1.0f, 0.0f, 0.0f));*/
+
+                glm::vec3 currDir = glm::normalize(
+                        glm::vec3(playerObj->currentPosition - p->currentPosition)
+                );
+                p->movementDir = 0.1f * currDir;
             }
         }
     }
@@ -91,16 +105,19 @@ Game::~Game() {
     for(auto &p: objArray) {
         delete p;
     }
+
+    delete bullet;
 }
 
 void Game::shoot(glm::vec3 position, glm::vec3 direction) {
     if(previousFire <= 0) {
         float speed = 1;
         auto testBullet = new MoveableObject(position + 5.0f*direction, speed*direction, 0.2f, 0.2f, 0.2f, 0, "red");
+        testBullet->model = bullet;
         testBullet->setShow(true);
         testBullet->life = true;
-        addMoveable(testBullet);
         previousFire = fireRate;
+        addMoveable(testBullet);
     }
 }
 

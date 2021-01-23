@@ -14,13 +14,21 @@ public:
     Game() = default;
     ~Game();
 
-    void gameTick(float dt, glm::mat4 projection, glm::mat4 view);
+    void gameTick(float dt, glm::mat4 projection, glm::mat4 view, glm::vec3& viewPosition);
     void levelLogic();
     void addMoveable(MoveableObject*);
     void shoot(glm::vec3 position, glm::vec3 direction);
     MoveableObject* moveLookahead(MoveableObject*);
 
     MoveableObject* playerObj;
+    Shader* savedShader;
+    glm::vec3* viewPosition;
+    DirLight* savedDirLight;
+    std::vector<PointLight>* savedPointLights;
+    SpotLight* savedSpotLight;
+
+    ModelObject* bullet;
+    ModelObject* zombieModel;
 private:
     // an array of all objects which update over time
     // for example: bullets, zombies

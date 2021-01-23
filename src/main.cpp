@@ -22,7 +22,7 @@
 #include <Cube.h>
 #include <LightCube.h>
 #include <crosshair.h>
-#include <ModelObject.h>
+//#include <ModelObject.h>
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 
@@ -218,6 +218,21 @@ int main() {
 
 //    RectangleObject rect("resources/textures/container.jpg");
     Shader generalShader("resources/shaders/rectangleObjectShader.vs","resources/shaders/rectangleObjectShader.fs");
+    programState->game.savedShader = &generalShader;
+    programState->game.savedDirLight = &dirLight;
+    programState->game.savedPointLights = &pointLights;
+    programState->game.savedSpotLight = &spotLight;
+
+    programState->game.bullet = new ModelObject("resources/objects/Model_C0811054/AR Bullet.obj");
+    programState->game.bullet->setScaleVect(glm::vec3(0.1f));
+    programState->game.bullet->setTranslateVect(glm::vec3(0.0f,0.0f,0.0f));
+    programState->game.bullet->setRotateVect(90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+
+    programState->game.zombieModel = new ModelObject("resources/objects/Zombie Pack/zombie_normal.obj");
+    programState->game.zombieModel->setScaleVect(glm::vec3(15.0f,15.0f,15.0f));
+    programState->game.zombieModel->setTranslateVect(glm::vec3(-3.0f,-10.0f,-8.0f));
+    programState->game.zombieModel->setRotateVect(-90.0f,glm::vec3(0.0f,0.0f,1.0f));
+
     Room warehouse ("resources/textures/brickwall.jpg","resources/textures/brickwall.jpg","resources/textures/window.png","resources/textures/window.png");
     warehouse.buildHitboxes(&programState->game);
 
@@ -228,8 +243,6 @@ int main() {
     ModelObject rifle("resources/objects/Model_C0811038/M4.obj");
     ModelObject animeGirl("resources/objects/Model_D0306021/D0306021.obj");
     ModelObject forklift("resources/objects/Forklift/Forklift.obj");
-    ModelObject bullet("resources/objects/Model_C0811054/AR Bullet.obj");
-    ModelObject zombie("resources/objects/Zombie Pack/zombie_normal.obj");
 
     // draw in wireframe
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -265,8 +278,7 @@ int main() {
 
 
 
-
-        programState->game.gameTick(deltaTime, projection, view);
+        programState->game.gameTick(deltaTime, projection, view, programState->camera.Position);
 
         light.setup(projection,view);
 
@@ -318,22 +330,16 @@ int main() {
         animeGirl.scale(glm::vec3(1.0f,1.0f,1.0f));
         animeGirl.draw(generalShader);
 
-        bullet.setup(generalShader,projection,view,programState->camera.Position,dirLight,pointLights,spotLight);
-        bullet.translate(glm::vec3(15.0f,0.0f,-15.0f));
-        bullet.rotate(90.0f,glm::vec3(1.0f,0.0f,0.0f));
-        bullet.scale(glm::vec3(0.25f,0.25f,0.25f));
-        bullet.draw(generalShader);
+
 
         forklift.setup(generalShader,projection,view,programState->camera.Position,dirLight,pointLights,spotLight);
         forklift.translate(glm::vec3(-20.0f,-30.0f,-10.0f));
         forklift.scale(glm::vec3(5.0f,5.0f,5.0f));
         forklift.draw(generalShader);
 
-        zombie.setup(generalShader,projection,view,programState->camera.Position,dirLight,pointLights,spotLight);
-        zombie.translate(glm::vec3(30.0f,-25.0f,30.0f));
-        zombie.rotate(-90.0f,glm::vec3(0.0f,0.0f,1.0f));
-        zombie.scale(glm::vec3(15.0f,15.0f,15.0f));
-        zombie.draw(generalShader);
+        /*zombie.setup(generalShader,projection,view,programState->camera.Position,dirLight,pointLights,spotLight);
+
+        zombie.draw(generalShader);*/
 
         crosshair.draw();
 

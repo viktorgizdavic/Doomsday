@@ -14,12 +14,22 @@ MoveableObject::~MoveableObject() {
     delete hitbox;
 }
 
-void MoveableObject::draw(glm::mat4 projection, glm::mat4 view) {
+void MoveableObject::draw(Shader& shader, glm::mat4& projection, glm::mat4& view,glm::vec3& cameraPos, DirLight *savedDirLight,
+                          std::vector<PointLight> *savedPointLights, SpotLight *savedSpotLight) {
     if(hitbox->shouldShow) {
         hitbox->getVisual()->setup(projection, view);
         hitbox->getVisual()->translate(currentPosition);
         hitbox->getVisual()->scale(glm::vec3(hitbox->width/2, hitbox->height/2, hitbox->length/2));
         hitbox->getVisual()->draw();
+    }
+    if(model) {
+        model->setup(shader,projection,view,cameraPos,*savedDirLight,*savedPointLights,*savedSpotLight);
+        model->translate(currentPosition + model->getTranslateVect());
+        // TODO: rotate the model to match camera.Front vector for bullets (?)
+
+        model->rotate();
+        model->scale();
+        model->draw(shader);
     }
 }
 
@@ -34,6 +44,7 @@ void MoveableObject::move() {
             newPos.y - currentPosition.y,
             newPos.z - currentPosition.z
     );
+    oldPosition = currentPosition;
     currentPosition = newPos;
 }
 
@@ -44,5 +55,4 @@ void MoveableObject::setMove(bool value) {
 bool MoveableObject::checkMove() const {
     return canMove;
 }
-
 

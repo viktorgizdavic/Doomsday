@@ -9,18 +9,20 @@
 // example: bullets
 
 #include "BoundingBox.h"
+#include "ModelObject.h"
 
 class MoveableObject {
 public:
     MoveableObject(glm::vec3 pos, glm::vec3 moveDir, float width, float height, float length, unsigned int priority, const std::string& color);
     virtual ~MoveableObject();
     virtual void move();
-    void draw(glm::mat4 projection, glm::mat4 view);
+    void draw(Shader& shader, glm::mat4& projection, glm::mat4& view, glm::vec3& cameraPos, DirLight* savedDirLight, std::vector<PointLight>* savedPointLights, SpotLight* savedSpotLight);
     void setShow(bool value) const;
     void setMove(bool value);
     bool checkMove() const;
 
     BoundingBox* hitbox;
+    ModelObject* model = nullptr;
     bool shouldDelete;
     bool life = false;
     unsigned int priorityLevel;
@@ -28,6 +30,7 @@ public:
     float health = 100;
     glm::vec3 currentPosition;
     glm::vec3 movementDir;
+    glm::vec3 oldPosition;
 private:
     bool canMove = true;
 };

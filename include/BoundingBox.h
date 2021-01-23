@@ -7,6 +7,7 @@
 
 #include "LightCube.h"
 
+
 class BoundingBox {
 public:
     BoundingBox(float x, float y, float z, float width, float height, float length, const std::string& color);

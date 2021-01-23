@@ -6,12 +6,19 @@
 #define DOOMSDAY_MODELOBJECT_H
 #include <LightStructs.h>
 #include <learnopengl/model.h>
+
 class ModelObject : public Model {
 private:
     glm::mat4 position=glm::mat4(1.0f);
+    glm::vec3 scaleVect=glm::vec3(1.0f);
+    glm::vec3 translateVect=glm::vec3(0.0f);
+    glm::mat4 rotationVect=glm::mat4(1.0f);
 public:
     ModelObject(string const &path, bool gamma = false):Model(path,gamma)
     {}
+
+
+
     void setup(Shader& shader,glm::mat4 projection,glm::mat4 view,glm::vec3 viewPos,DirLight& dirLight,std::vector<PointLight>& pointLights,SpotLight& spotLight)
     {
         shader.use();
@@ -77,13 +84,44 @@ public:
     {
         position=glm::translate(position,vector);
     }
+
+    void translate()
+    {
+        position=glm::translate(position,translateVect);
+    }
+
     void rotate(float angle,glm::vec3 vector)
     {
         position=glm::rotate(position,glm::radians(angle),vector);
     }
+
+    void setRotateVect(float angle, glm::vec3 vector) {
+        rotationVect=glm::rotate(rotationVect,glm::radians(angle),vector);
+    }
+
+    glm::mat4 rotate() {
+        position*=rotationVect;
+    }
+
     void scale(glm::vec3 vector)
     {
-        position=glm::scale(position,vector);
+        position=glm::scale(position, vector);
+    }
+
+    void scale() {
+        position = glm::scale(position, scaleVect);
+    }
+
+    void setScaleVect(glm::vec3 vector) {
+        scaleVect = vector;
+    }
+
+    void setTranslateVect(glm::vec3 vector) {
+        translateVect = vector;
+    }
+
+    glm::vec3 getTranslateVect() {
+        return translateVect;
     }
 
     void draw(Shader& shader)
