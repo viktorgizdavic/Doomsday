@@ -18,6 +18,8 @@
 #include <iostream>
 #include <string>
 
+#include <LightStructs.h>
+
 #define xTranslate1 (0.0f)
 #define yTranslate1 (0.0f)
 #define zTranslate1 (20.0f)
@@ -134,7 +136,7 @@ public:
         rectShader.setInt("material.specular",1);
 
     }
-    void setup(glm::mat4 projection,glm::mat4 view,glm::vec3 viewPos)
+    void setup(glm::mat4 projection,glm::mat4 view,glm::vec3 viewPos,DirLight& dirLight,std::vector<PointLight>& pointLights,SpotLight& spotLight)
     {
         rectShader.use();
         rectShader.setMat4("view",view);
@@ -144,69 +146,45 @@ public:
         rectShader.setVec3("viewPosition",viewPos);
         rectShader.setFloat("material.shininess",32.0f);
 
-        rectShader.setVec3("dirLight.direction",glm::vec3(0.0f,0.0f,-1.0f));
-        rectShader.setVec3("dirLight.ambient", 0.05f, 0.05f, 0.05f);
-        rectShader.setVec3("dirLight.diffuse", 0.0f, 0.0f, 0.0f);
-        rectShader.setVec3("dirLight.specular", 0.0f, 0.0f, 0.0f);
+        rectShader.setVec3("dirLight.direction",dirLight.direction);
+        rectShader.setVec3("dirLight.ambient", dirLight.ambient);
+        rectShader.setVec3("dirLight.diffuse", dirLight.diffuse);
+        rectShader.setVec3("dirLight.specular", dirLight.specular);
 
         //point lights
-        rectShader.setVec3("pointLights[0].position", glm::vec3(xScaling1,yScaling1,zScaling1)*(glm::vec3(30.0f,0.0f,-30.0f)+glm::vec3(xTranslate1,yTranslate1,zTranslate1)));
-        rectShader.setVec3("pointLights[0].ambient", 0.05f, 0.05f, 0.05f);
-        rectShader.setVec3("pointLights[0].diffuse", 0.8f, 0.8f, 0.8f);
-        rectShader.setVec3("pointLights[0].specular", 1.0f, 1.0f, 1.0f);
-        rectShader.setFloat("pointLights[0].constant", 1.0f);
-        rectShader.setFloat("pointLights[0].linear", 0.009);
-        rectShader.setFloat("pointLights[0].quadratic", 0.0032);
-        // point light 2
-        rectShader.setVec3("pointLights[1].position", glm::vec3(xScaling1,yScaling1,zScaling1)*(glm::vec3(0.0f,15.0f,-30.0f+(60.0f*1/3))+glm::vec3(xTranslate1,yTranslate1,zTranslate1)));
-        rectShader.setVec3("pointLights[1].ambient", 0.05f, 0.05f, 0.05f);
-        rectShader.setVec3("pointLights[1].diffuse", 0.8f, 0.8f, 0.8f);
-        rectShader.setVec3("pointLights[1].specular", 1.0f, 1.0f, 1.0f);
-        rectShader.setFloat("pointLights[1].constant", 1.0f);
-        rectShader.setFloat("pointLights[1].linear", 0.006);
-        rectShader.setFloat("pointLights[1].quadratic", 0.0016);
+//        rectShader.setVec3("pointLights[0].position", glm::vec3(xScaling1,yScaling1,zScaling1)*(glm::vec3(30.0f,0.0f,-30.0f)+glm::vec3(xTranslate1,yTranslate1,zTranslate1)));
+//        rectShader.setVec3("pointLights[0].ambient", 0.05f, 0.05f, 0.05f);
+//        rectShader.setVec3("pointLights[0].diffuse", 0.8f, 0.8f, 0.8f);
+//        rectShader.setVec3("pointLights[0].specular", 1.0f, 1.0f, 1.0f);
+//        rectShader.setFloat("pointLights[0].constant", 1.0f);
+//        rectShader.setFloat("pointLights[0].linear", 0.009);
+//        rectShader.setFloat("pointLights[0].quadratic", 0.0032);
 
-        //point light 3
-        rectShader.setVec3("pointLights[2].position", glm::vec3(xScaling1,yScaling1,zScaling1)*(glm::vec3(-60.0f*1/3,15.0f,-30.0f)+glm::vec3(xTranslate1,yTranslate1,zTranslate1)));
-        rectShader.setVec3("pointLights[2].ambient", 0.05f, 0.05f, 0.05f);
-        rectShader.setVec3("pointLights[2].diffuse", 0.8f, 0.8f, 0.8f);
-        rectShader.setVec3("pointLights[2].specular", 1.0f, 1.0f, 1.0f);
-        rectShader.setFloat("pointLights[2].constant", 1.0f);
-        rectShader.setFloat("pointLights[2].linear", 0.006);
-        rectShader.setFloat("pointLights[2].quadratic", 0.0016);
-
-        //point light 4
-        rectShader.setVec3("pointLights[3].position", glm::vec3(xScaling1,yScaling1,zScaling1)*(glm::vec3(60.0f*1/6*1/2-15.0f,15.0f,-50.0f)+glm::vec3(xTranslate1,yTranslate1,zTranslate1)));
-        rectShader.setVec3("pointLights[3].ambient", 0.05f, 0.05f, 0.05f);
-        rectShader.setVec3("pointLights[3].diffuse", 0.8f, 0.8f, 0.8f);
-        rectShader.setVec3("pointLights[3].specular", 1.0f, 1.0f, 1.0f);
-        rectShader.setFloat("pointLights[3].constant", 1.0f);
-        rectShader.setFloat("pointLights[3].linear", 0.006);
-        rectShader.setFloat("pointLights[3].quadratic", 0.0016);
-
-        //point light 4
-        rectShader.setVec3("pointLights[4].position", glm::vec3(xScaling1,yScaling1,zScaling1)*(glm::vec3(60.0f*1/6*1/2+15.0f,15.0f,-50.0f)+glm::vec3(xTranslate1,yTranslate1,zTranslate1)));
-        rectShader.setVec3("pointLights[4].ambient", 0.05f, 0.05f, 0.05f);
-        rectShader.setVec3("pointLights[4].diffuse", 0.8f, 0.8f, 0.8f);
-        rectShader.setVec3("pointLights[4].specular", 1.0f, 1.0f, 1.0f);
-        rectShader.setFloat("pointLights[4].constant", 1.0f);
-        rectShader.setFloat("pointLights[4].linear", 0.006);
-        rectShader.setFloat("pointLights[4].quadratic", 0.0016);
+        for (int i = 0; i < pointLights.size(); ++i) {
+            std::string iStr=std::to_string(i);
+            rectShader.setVec3("pointLights["+iStr+"].position", pointLights[i].position);
+            rectShader.setVec3("pointLights["+iStr+"].ambient", pointLights[i].ambient);
+            rectShader.setVec3("pointLights["+iStr+"].diffuse", pointLights[i].diffuse);
+            rectShader.setVec3("pointLights["+iStr+"].specular", pointLights[i].specular);
+            rectShader.setFloat("pointLights["+iStr+"].constant", pointLights[i].constant);
+            rectShader.setFloat("pointLights["+iStr+"].linear", pointLights[i].linear);
+            rectShader.setFloat("pointLights["+iStr+"].quadratic", pointLights[i].quadratic);
+        }
 
 
         //ceiling glass spotlight
-        rectShader.setVec3("spotLight.position",glm::vec3(4.0f,2.0f,4.0f)*(glm::vec3(60.0f*1/6*1/2,15.0f,-30.0f-(60.0f*1/6*1/2))+glm::vec3(0.0f,0.0f,20.0f)));
-        rectShader.setVec3("spotLight.direction",glm::vec3(0.0f,-1.0f,0.0f));
+        rectShader.setVec3("spotLight.position",spotLight.position);
+        rectShader.setVec3("spotLight.direction",spotLight.direction);
 //        rectShader.setVec3("spotLight.position",viewPos);
 //        rectShader.setVec3("spotLight.direction",front);
-        rectShader.setVec3("spotLight.ambient", 0.05f, 0.05f, 0.05f);
-        rectShader.setVec3("spotLight.diffuse", 1.0f, 1.0f, 1.0f);
-        rectShader.setVec3("spotLight.specular", 1.0f, 1.0f, 1.0f);
-        rectShader.setFloat("spotLight.constant", 1.0f);
-        rectShader.setFloat("spotLight.linear", 0.002);
-        rectShader.setFloat("spotLight.quadratic", 0.0008);
-        rectShader.setFloat("spotLight.cutOff", glm::cos(glm::radians(30.0f)));
-        rectShader.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(45.0f)));
+        rectShader.setVec3("spotLight.ambient", spotLight.ambient);
+        rectShader.setVec3("spotLight.diffuse", spotLight.diffuse);
+        rectShader.setVec3("spotLight.specular", spotLight.specular);
+        rectShader.setFloat("spotLight.constant", spotLight.constant);
+        rectShader.setFloat("spotLight.linear", spotLight.linear);
+        rectShader.setFloat("spotLight.quadratic", spotLight.quadratic);
+        rectShader.setFloat("spotLight.cutOff", spotLight.cutOff);
+        rectShader.setFloat("spotLight.outerCutOff", spotLight.outerCutOff);
     }
 
 //    void loadTexture(std::string texturePath)
@@ -270,10 +248,12 @@ public:
 
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_INT,0);
-        glBindVertexArray(0);
+//        glBindVertexArray(0);
 
         // TODO: google how to unbind texture (?)
 //        glActiveTexture(GL_TEXTURE0);
+//        glDeleteTextures(1,&diffuse);
+//        glDeleteTextures(1,&specular);
 
         resetTransformation();
     }

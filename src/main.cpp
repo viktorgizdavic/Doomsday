@@ -14,7 +14,7 @@
 #include <learnopengl/camera.h>
 #include <learnopengl/model.h>
 
-
+#include <LightStructs.h>
 #include <iostream>
 #include <Game.h>
 
@@ -22,6 +22,7 @@
 #include <Cube.h>
 #include <LightCube.h>
 #include <crosshair.h>
+#include <ModelObject.h>
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 
@@ -47,16 +48,7 @@ bool firstMouse = true;
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
-struct PointLight {
-    glm::vec3 position;
-    glm::vec3 ambient;
-    glm::vec3 diffuse;
-    glm::vec3 specular;
 
-    float constant;
-    float linear;
-    float quadratic;
-};
 
 struct ProgramState {
     glm::vec3 clearColor = glm::vec3(0);
@@ -165,6 +157,56 @@ int main() {
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init("#version 330 core");
 
+
+    glm::vec3 scaling(xScaling1,yScaling1,zScaling1);
+    glm::vec3 translated(xTranslate1,yTranslate1,zTranslate1);
+
+    //init directional light
+    DirLight dirLight;
+    dirLight.direction=glm::vec3(0.0f,0.0f,-1.0f);
+    dirLight.ambient=glm::vec3 (0.05f, 0.05f, 0.05f);
+    dirLight.diffuse=glm::vec3(0.0f, 0.0f, 0.0f);
+    dirLight.specular=glm::vec3(0.0f, 0.0f, 0.0f);
+
+
+    //init point lights
+    int pointLightCount=5;
+    std::vector<glm::vec3> pointLightPositions = {
+            scaling*(glm::vec3(30.0f,0.0f,-30.0f)+translated),
+            scaling*(glm::vec3(0.0f,15.0f,-30.0f+(60.0f*1/3))+translated),
+            scaling*(glm::vec3(-60.0f*1/3,15.0f,-30.0f)+translated),
+            scaling*(glm::vec3(60.0f*1/6*1/2-15.0f,15.0f,-50.0f)+translated),
+            scaling*(glm::vec3(60.0f*1/6*1/2+15.0f,15.0f,-50.0f)+translated)
+    };
+
+    std::vector<PointLight> pointLights(pointLightCount);
+
+
+    for (int i = 0; i < pointLightCount; ++i) {
+        PointLight pl;
+        pl.ambient = glm::vec3(0.05f, 0.05f, 0.05f);
+        pl.diffuse = glm::vec3(0.8f, 0.8f, 0.8f);
+        pl.specular = glm::vec3(1.0f, 1.0f, 1.0f);
+        pl.constant = 1.0f;
+        pl.linear = 0.006f;
+        pl.quadratic = 0.0005f;
+        pl.position = pointLightPositions[i];
+        pointLights[i]=pl;
+    }
+
+    //init spotlight
+    SpotLight spotLight;
+    spotLight.position=scaling*(glm::vec3(60.0f*1/6*1/2,15.0f,-30.0f-(60.0f*1/6*1/2))+translated);
+    spotLight.direction=glm::vec3(0.0f,-1.0f,0.0f);
+    spotLight.ambient=glm::vec3( 0.05f, 0.05f, 0.05f);
+    spotLight.diffuse=glm::vec3(1.0f, 1.0f, 1.0f);
+    spotLight.specular=glm::vec3(1.0f, 1.0f, 1.0f);
+    spotLight.constant=1.0f;
+    spotLight.linear=0.002f;
+    spotLight.quadratic=0.0008f;
+    spotLight.cutOff=glm::cos(glm::radians(30.0f));
+    spotLight.outerCutOff=glm::cos(glm::radians(45.0f));
+
     // configure global opengl state
     // -----------------------------
     glEnable(GL_DEPTH_TEST);
@@ -175,91 +217,17 @@ int main() {
 //    Shader wallShader("resources/shaders/rectangleObjectShader.vs","resources/shaders/rectangleObjectShader.fs");
 
 //    RectangleObject rect("resources/textures/container.jpg");
-
+    Shader generalShader("resources/shaders/rectangleObjectShader.vs","resources/shaders/rectangleObjectShader.fs");
     Room warehouse ("resources/textures/brickwall.jpg","resources/textures/brickwall.jpg","resources/textures/window.png","resources/textures/window.png");
     LightCube light(glm::vec3(1.0f));
     Crosshair crosshair (glm::vec3(0.0f,1.0f,0.0f));
     Cube c1 ("resources/textures/container2.png","resources/textures/container2_specular.png");
-//    //build wall
-//    float wallVertices[] = {
-//            // positions         // texture coords
-//            0.5f,  0.5f, 0.0f,   1.0f, 1.0f, // top right
-//            0.5f, -0.5f, 0.0f,   1.0f, 0.0f, // bottom right
-//            -0.5f, -0.5f, 0.0f,  0.0f, 0.0f, // bottom left
-//            -0.5f,  0.5f, 0.0f,   0.0f, 1.0f  // top left
-//    };
-//    unsigned int wallIndices[] = {
-//            0, 1, 3, // first triangle
-//            1, 2, 3  // second triangle
-//    };
-//    unsigned int VBO, VAO, EBO;
-//    glGenVertexArrays(1, &VAO);
-//    glGenBuffers(1, &VBO);
-//    glGenBuffers(1, &EBO);
-//
-//    glBindVertexArray(VAO);
-//
-//    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-//    glBufferData(GL_ARRAY_BUFFER, sizeof(wallVertices), wallVertices, GL_STATIC_DRAW);
-//
-//    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-//    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(wallIndices), wallIndices, GL_STATIC_DRAW);
-//
-//    // position attribute
-//    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-//    glEnableVertexAttribArray(0);
-//
-//    // texture coord attribute
-//    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-//    glEnableVertexAttribArray(1);
-//
-//
-//    // load and create a texture
-//    // -------------------------
-//    unsigned int texture1;
-//    glGenTextures(1, &texture1);
-//    glBindTexture(GL_TEXTURE_2D, texture1); // all upcoming GL_TEXTURE_2D operations now have effect on this texture object
-//    // set the texture wrapping parameters
-//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
-//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-//    // set texture filtering parameters
-//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-//    // load image, create texture and generate mipmaps
-//    int width, height, nrChannels;
-//    // The FileSystem::getPath(...) is part of the GitHub repository so we can find files on any IDE/platform; replace it with your own image path.
-//    unsigned char *data = stbi_load(FileSystem::getPath("resources/textures/container.jpg").c_str(), &width, &height, &nrChannels, 0);
-//    if (data)
-//    {
-//        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-//        glGenerateMipmap(GL_TEXTURE_2D);
-//    }
-//    else
-//    {
-//        std::cout << "Failed to load texture" << std::endl;
-//    }
-//    stbi_image_free(data);
-//    wallShader.use();
-//    wallShader.setInt("texture1",0);
 
-
-    // load models
-    // -----------
-//    Model ourModel("resources/objects/backpack/backpack.obj");
-//    ourModel.SetShaderTextureNamePrefix("material.");
-//
-//    PointLight& pointLight = programState->pointLight;
-//    pointLight.position = glm::vec3(4.0f, 4.0, 0.0);
-//    pointLight.ambient = glm::vec3(0.1, 0.1, 0.1);
-//    pointLight.diffuse = glm::vec3(0.6, 0.6, 0.6);
-//    pointLight.specular = glm::vec3(1.0, 1.0, 1.0);
-//
-//    pointLight.constant = 1.0f;
-//    pointLight.linear = 0.09f;
-//    pointLight.quadratic = 0.032f;
-
-    glm::vec3 scaling(4.0f,2.0f,4.0f);
-    glm::vec3 translated(0.0f,0.0f,20.0f);
+    Shader rifleshader ("resources/shaders/rectangleObjectShader.vs","resources/shaders/rectangleObjectShader.fs");
+    ModelObject rifle("resources/objects/Model_D0901C27/m4a1_s.obj");
+//    ModelObject animeGirl("resources/objects/Model_D0307021/D0307021.obj");
+    ModelObject animeGirl("resources/objects/Model_D0607085/D0607085.obj");
+//    animeGirl.SetShaderTextureNamePrefix("material.");
 
     // draw in wireframe
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -329,7 +297,7 @@ int main() {
 
         light.setup(projection,view);
 
-        warehouse.setup(projection,view,programState->camera.Position);
+        warehouse.setup(projection,view,programState->camera.Position,dirLight,pointLights,spotLight);
         warehouse.draw();
 
         light.translate(scaling*(glm::vec3(30.0f,0.0f,-30.0f)+translated));
@@ -353,7 +321,7 @@ int main() {
         light.scale(glm::vec3(10.0f,5.0f,1.0f));
         light.draw();
 
-        c1.setup(projection,view,programState->camera.Position);
+        c1.setup(projection,view,programState->camera.Position,dirLight,pointLights,spotLight);
 
 //        c1.translate(glm::vec3(0.0f,-10.0f,20.0f));
 //        c1.scale(glm::vec3(10.0f,10.0f,10.0f));
@@ -361,6 +329,20 @@ int main() {
         c1.translate(glm::vec3(4.0f,2.0f,4.0f)*(glm::vec3(60.0f*1/6*1/2,-10.0f,-30.0f-(60.0f*1/6*1/2))+glm::vec3(0.0f,0.0f,20.0f)));
         c1.scale(glm::vec3(10.0f,10.0f,10.0f));
         c1.draw();
+
+        rifle.setup(rifleshader,glm::mat4(1.0f),glm::mat4(1.0f),programState->camera.Position,dirLight,pointLights,spotLight);
+
+        rifle.translate(glm::vec3(1.0f,-0.6f,0.5f));
+        rifle.rotate(-40.0f,glm::vec3(0.0f,1.0f,0.0f));
+        rifle.rotate(-20.0f,glm::vec3(1.0f,0.0f,0.0f));
+        rifle.scale(glm::vec3(0.06f,0.05f,0.03f));
+        rifle.draw(rifleshader);
+
+        animeGirl.setup(generalShader,projection,view,programState->camera.Position,dirLight,pointLights,spotLight);
+
+        animeGirl.translate(glm::vec3(0.0f,-27.0f,10.0f));
+        animeGirl.scale(glm::vec3(2.5f,2.0f,2.5f));
+        animeGirl.draw(generalShader);
 
         crosshair.draw();
 

@@ -20,10 +20,10 @@ public:
     Room(std::string texturePath,std::string specularMapPath,std::string doorTexturePath,std::string doorSpecularMapPath):rect(texturePath,specularMapPath),door(doorTexturePath,doorSpecularMapPath)
     {}
 
-    void setup(glm::mat4 projection,glm::mat4 view,glm::vec3 viewPos)
+    void setup(glm::mat4 projection,glm::mat4 view,glm::vec3 viewPos,DirLight& dirLight,std::vector<PointLight>& pointLights,SpotLight& spotLight)
     {
-        rect.setup(projection,view,viewPos);
-        door.setup(projection,view,viewPos);
+        rect.setup(projection,view,viewPos,dirLight,pointLights,spotLight);
+        door.setup(projection,view,viewPos,dirLight,pointLights,spotLight);
     }
 
     void draw()

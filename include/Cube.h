@@ -141,7 +141,7 @@ public:
         cubeShader.setInt("material.diffuse",0);
         cubeShader.setInt("material.specular",1);
     }
-    void setup(glm::mat4 projection,glm::mat4 view,glm::vec3 viewPos)
+    void setup(glm::mat4 projection,glm::mat4 view,glm::vec3 viewPos,DirLight& dirLight,std::vector<PointLight>& pointLights,SpotLight& spotLight)
     {
         cubeShader.use();
         cubeShader.setMat4("view",view);
@@ -153,69 +153,38 @@ public:
 
 
         //dim directional light
-        cubeShader.setVec3("dirLight.direction",glm::vec3(0.0f,0.0f,-1.0f));
-        cubeShader.setVec3("dirLight.ambient", 0.05f, 0.05f, 0.05f);
-        cubeShader.setVec3("dirLight.diffuse", 0.0f, 0.0f, 0.0f);
-        cubeShader.setVec3("dirLight.specular", 0.0f, 0.0f, 0.0f);
+        cubeShader.setVec3("dirLight.direction",dirLight.direction);
+        cubeShader.setVec3("dirLight.ambient", dirLight.ambient);
+        cubeShader.setVec3("dirLight.diffuse", dirLight.diffuse);
+        cubeShader.setVec3("dirLight.specular", dirLight.specular);
 
         //point lights
-        //point lights
-        cubeShader.setVec3("pointLights[0].position", glm::vec3(xScaling1,yScaling1,zScaling1)*(glm::vec3(30.0f,0.0f,-30.0f)+glm::vec3(xTranslate1,yTranslate1,zTranslate1)));
-        cubeShader.setVec3("pointLights[0].ambient", 0.05f, 0.05f, 0.05f);
-        cubeShader.setVec3("pointLights[0].diffuse", 0.8f, 0.8f, 0.8f);
-        cubeShader.setVec3("pointLights[0].specular", 1.0f, 1.0f, 1.0f);
-        cubeShader.setFloat("pointLights[0].constant", 1.0f);
-        cubeShader.setFloat("pointLights[0].linear", 0.009);
-        cubeShader.setFloat("pointLights[0].quadratic", 0.0032);
-        // point light 2
-        cubeShader.setVec3("pointLights[1].position", glm::vec3(xScaling1,yScaling1,zScaling1)*(glm::vec3(0.0f,15.0f,-30.0f+(60.0f*1/3))+glm::vec3(xTranslate1,yTranslate1,zTranslate1)));
-        cubeShader.setVec3("pointLights[1].ambient", 0.05f, 0.05f, 0.05f);
-        cubeShader.setVec3("pointLights[1].diffuse", 0.8f, 0.8f, 0.8f);
-        cubeShader.setVec3("pointLights[1].specular", 1.0f, 1.0f, 1.0f);
-        cubeShader.setFloat("pointLights[1].constant", 1.0f);
-        cubeShader.setFloat("pointLights[1].linear", 0.006);
-        cubeShader.setFloat("pointLights[1].quadratic", 0.0016);
+        for (int i = 0; i < pointLights.size(); ++i) {
+            std::string iStr=std::to_string(i);
+            cubeShader.setVec3("pointLights["+iStr+"].position", pointLights[i].position);
+            cubeShader.setVec3("pointLights["+iStr+"].ambient", pointLights[i].ambient);
+            cubeShader.setVec3("pointLights["+iStr+"].diffuse", pointLights[i].diffuse);
+            cubeShader.setVec3("pointLights["+iStr+"].specular", pointLights[i].specular);
+            cubeShader.setFloat("pointLights["+iStr+"].constant", pointLights[i].constant);
+            cubeShader.setFloat("pointLights["+iStr+"].linear", pointLights[i].linear);
+            cubeShader.setFloat("pointLights["+iStr+"].quadratic", pointLights[i].quadratic);
+        }
 
-        //point light 3
-        cubeShader.setVec3("pointLights[2].position", glm::vec3(xScaling1,yScaling1,zScaling1)*(glm::vec3(-60.0f*1/3,15.0f,-30.0f)+glm::vec3(xTranslate1,yTranslate1,zTranslate1)));
-        cubeShader.setVec3("pointLights[2].ambient", 0.05f, 0.05f, 0.05f);
-        cubeShader.setVec3("pointLights[2].diffuse", 0.8f, 0.8f, 0.8f);
-        cubeShader.setVec3("pointLights[2].specular", 1.0f, 1.0f, 1.0f);
-        cubeShader.setFloat("pointLights[2].constant", 1.0f);
-        cubeShader.setFloat("pointLights[2].linear", 0.006);
-        cubeShader.setFloat("pointLights[2].quadratic", 0.0016);
-
-        //point light 4
-        cubeShader.setVec3("pointLights[3].position", glm::vec3(xScaling1,yScaling1,zScaling1)*(glm::vec3(60.0f*1/6*1/2-15.0f,15.0f,-50.0f)+glm::vec3(xTranslate1,yTranslate1,zTranslate1)));
-        cubeShader.setVec3("pointLights[3].ambient", 0.05f, 0.05f, 0.05f);
-        cubeShader.setVec3("pointLights[3].diffuse", 0.8f, 0.8f, 0.8f);
-        cubeShader.setVec3("pointLights[3].specular", 1.0f, 1.0f, 1.0f);
-        cubeShader.setFloat("pointLights[3].constant", 1.0f);
-        cubeShader.setFloat("pointLights[3].linear", 0.006);
-        cubeShader.setFloat("pointLights[3].quadratic", 0.0016);
-
-        //point light 4
-        cubeShader.setVec3("pointLights[4].position", glm::vec3(xScaling1,yScaling1,zScaling1)*(glm::vec3(60.0f*1/6*1/2+15.0f,15.0f,-50.0f)+glm::vec3(xTranslate1,yTranslate1,zTranslate1)));
-        cubeShader.setVec3("pointLights[4].ambient", 0.05f, 0.05f, 0.05f);
-        cubeShader.setVec3("pointLights[4].diffuse", 0.8f, 0.8f, 0.8f);
-        cubeShader.setVec3("pointLights[4].specular", 1.0f, 1.0f, 1.0f);
-        cubeShader.setFloat("pointLights[4].constant", 1.0f);
-        cubeShader.setFloat("pointLights[4].linear", 0.006);
-        cubeShader.setFloat("pointLights[4].quadratic", 0.0016);
 
         //ceiling glass spotlight
-        cubeShader.setVec3("spotLight.position",glm::vec3(4.0f,2.0f,4.0f)*(glm::vec3(60.0f*1/6*1/2,15.0f,-30.0f-(60.0f*1/6*1/2))+glm::vec3(0.0f,0.0f,20.0f)));
-        cubeShader.setVec3("spotLight.direction",glm::vec3(0.0f,-1.0f,0.0f));
+        cubeShader.setVec3("spotLight.position",spotLight.position);
+        cubeShader.setVec3("spotLight.direction",spotLight.direction);
 //        rectShader.setVec3("spotLight.position",viewPos);
 //        rectShader.setVec3("spotLight.direction",front);
-        cubeShader.setVec3("spotLight.ambient", 0.05f, 0.05f, 0.05f);
-        cubeShader.setVec3("spotLight.diffuse", 1.0f, 1.0f, 1.0f);
-        cubeShader.setVec3("spotLight.specular", 1.0f, 1.0f, 1.0f);
-        cubeShader.setFloat("spotLight.constant", 1.0f);
-        cubeShader.setFloat("spotLight.linear", 0.002);
-        cubeShader.setFloat("spotLight.quadratic", 0.0008);
-        cubeShader.setFloat("spotLight.cutOff", glm::cos(glm::radians(30.0f)));
-        cubeShader.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(45.0f)));
+        cubeShader.setVec3("spotLight.ambient", spotLight.ambient);
+        cubeShader.setVec3("spotLight.diffuse", spotLight.diffuse);
+        cubeShader.setVec3("spotLight.specular", spotLight.specular);
+        cubeShader.setFloat("spotLight.constant", spotLight.constant);
+        cubeShader.setFloat("spotLight.linear", spotLight.linear);
+        cubeShader.setFloat("spotLight.quadratic", spotLight.quadratic);
+        cubeShader.setFloat("spotLight.cutOff", spotLight.cutOff);
+        cubeShader.setFloat("spotLight.outerCutOff", spotLight.outerCutOff);
+
     }
 
     void resetTransformation()
