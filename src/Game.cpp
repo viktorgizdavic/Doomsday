@@ -8,26 +8,35 @@
 void Game::gameTick(float dt, glm::mat4 projection, glm::mat4 view) {
     timeElapsed += dt;
     bool tickUpdate = (timeElapsed-previousTick) >= tickSec;
-    for(auto p = objArray.begin(); p != objArray.end(); ++p) {
+    auto p = objArray.begin();
+    for(; p != objArray.end(); ++p) {
+        if((*p)->shouldDelete)
+            continue;
         // tick the movement and check for collisions
         // TODO: complexity is O(n^2) at the moment, find a better way to do this
         if(tickUpdate) {
             (*p)->move();
             auto other = objArray.begin();
-            while(other != objArray.end()) {
+            for(; other != objArray.end(); ++other) {
+                if((*other)->shouldDelete) continue;
                 if(p != other) {
                     if(BoundingBox::boxesIntersect(*(*p)->hitbox, *(*other)->hitbox)) {
                         std::cout << "object collision" << std::endl;
-                        /*delete *other;
-                        objArray.erase(other);*/
+                        (*p)->shouldDelete = true;
                     }
                 }
-                other++;
             }
         }
 
         // we have to redraw them every render loop iteration
         (*p)->draw(projection, view);
+    }
+
+    for(; p!= objArray.end(); ++p) {
+        if((*p)->shouldDelete) {
+            objArray.erase(p);
+            delete *p;
+        }
     }
 
     if((timeElapsed - logicTick) >= 1) {

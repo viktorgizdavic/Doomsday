@@ -5,7 +5,7 @@
 #include "MoveableObject.h"
 
 MoveableObject::MoveableObject(glm::vec3 pos, glm::vec3 moveDir, float width, float height)
-    : currentPosition(pos), movementDir(moveDir)
+    : shouldDelete(false), currentPosition(pos), movementDir(moveDir)
 {
     hitbox = new BoundingBox(pos.x, pos.y, pos.z, width, height);
 }

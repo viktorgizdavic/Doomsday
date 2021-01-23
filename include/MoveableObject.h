@@ -18,7 +18,9 @@ public:
     virtual void move();
     void draw(glm::mat4 projection, glm::mat4 view);
     void setShow(bool value);
+
     BoundingBox* hitbox;
+    bool shouldDelete;
 private:
     glm::vec3 currentPosition;
     glm::vec3 movementDir;
