@@ -69,16 +69,31 @@ void Game::levelLogic() {
     if(secondsCounter==delayBetweenLevels)
     {
         int alternatingFactor=1;//move one enemy to the left and another to the right,to avoid collisions
-        for (unsigned int i = 0; i < enemyCountPerLevel; ++i) {
+        unsigned int i;
+        for (i = 0; i < enemyCountPerLevel-animeGirlCountPerLevel; ++i) {
             auto testZombie = new MoveableObject(glm::vec3 (0.0f+10.0f*(float)alternatingFactor*(float)i, -15.0f, -150.0f), glm::vec3 (0.0f, 0.0f, 0.0f), 15.0f, 50.0f, 15.0f, 2, "green");
             testZombie->model = zombieModel;
             //testZombie->setShow(true);
             addMoveable(testZombie);
             alternatingFactor*=-1;
         }
+        if(enemyCountPerLevel>=10)
+        {
+            while (i<enemyCountPerLevel)
+            {
+                auto animeGirl = new MoveableObject(glm::vec3 (0.0f+10.0f*(float)alternatingFactor*(float)i, -15.0f, -150.0f), glm::vec3 (0.0f, 0.0f, 0.0f), 15.0f, 50.0f, 15.0f, 2, "green");
+                animeGirl->model = animeGirlModel;
+                //testZombie->setShow(true);
+                addMoveable(animeGirl);
+                alternatingFactor*=-1;
+                i++;
+            }
+        }
         delayBetweenLevels+=delayBetweenLevelsIncrease;
         if(enemyCountPerLevel<10)//da se ne bi zakucavali u teksturu
             enemyCountPerLevel+=enemyCountIncreasePerLevel;
+        else if(animeGirlCountPerLevel<10)//da se ne bi zakucavali u teksturu
+            animeGirlCountPerLevel+=animeGirlCountPerLevelIncrease;
         enemySpeedFactor+=enemySpeedFactorIncrease;
     }
 //    if(secondsCounter == 5) {

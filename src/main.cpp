@@ -233,6 +233,17 @@ int main() {
     programState->game.zombieModel->setTranslateVect(glm::vec3(-3.0f,-10.0f,-8.0f));
     programState->game.zombieModel->setRotateVect(-90.0f,glm::vec3(0.0f,0.0f,1.0f));
 
+//    animeGirl.setup(generalShader,projection,view,programState->camera.Position,dirLight,pointLights,spotLight);
+//    animeGirl.translate(glm::vec3(0.0f,-30.0f,-10.0f));
+//    animeGirl.scale(glm::vec3(1.0f,1.0f,1.0f));
+//    animeGirl.draw(generalShader);
+
+
+    programState->game.animeGirlModel = new ModelObject("resources/objects/Model_D0306021/D0306021.obj");
+    programState->game.animeGirlModel->setScaleVect(glm::vec3(1.0f,1.0f,1.0f));
+    programState->game.animeGirlModel->setTranslateVect(glm::vec3(glm::vec3(-3.0f,-30.0f,-8.0f)));
+    programState->game.animeGirlModel->setRotateVect(-90.0f,glm::vec3(0.0f,0.0f,1.0f));
+
     Room warehouse ("resources/textures/brickwall.jpg","resources/textures/brickwall.jpg","resources/textures/window.png","resources/textures/window.png");
     warehouse.buildHitboxes(&programState->game);
 

@@ -29,7 +29,7 @@ public:
 
     ModelObject* bullet;
     ModelObject* zombieModel;
-
+    ModelObject* animeGirlModel;
 
 
     unsigned int killCount=0;
@@ -58,6 +58,9 @@ private:
 
     float enemySpeedFactor=2.0;
     float enemySpeedFactorIncrease=1.0;
+
+    unsigned animeGirlCountPerLevel=0;
+    unsigned animeGirlCountPerLevelIncrease=1;
 };
 
 
