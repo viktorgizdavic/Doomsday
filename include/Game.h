@@ -29,6 +29,12 @@ public:
 
     ModelObject* bullet;
     ModelObject* zombieModel;
+
+
+
+    unsigned int killCount=0;
+
+
 private:
     // an array of all objects which update over time
     // for example: bullets, zombies
@@ -42,6 +48,16 @@ private:
 
     float fireRate = 0.2;
     float previousFire = 0;
+
+    //level settings
+    unsigned int enemyCountPerLevel=2;
+    unsigned enemyCountIncreasePerLevel=1;
+
+    unsigned delayBetweenLevels=1;//seconds
+    unsigned delayBetweenLevelsIncrease=10;//seconds
+
+    float enemySpeedFactor=2.0;
+    float enemySpeedFactorIncrease=1.0;
 };
 
 

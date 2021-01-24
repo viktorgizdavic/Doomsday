@@ -27,7 +27,9 @@ void Game::gameTick(float dt, glm::mat4 projection, glm::mat4 view, glm::vec3& c
                         bumpedObj->health -= 40;
                         if(bumpedObj->health <= 0) {
                             bumpedObj->shouldDelete = true;
+                            killCount++;
                             std::cout << "Killed zombie" << std::endl;
+                            std::cout << killCount << std::endl;
                         }
                     }
                 }
@@ -62,18 +64,35 @@ void Game::gameTick(float dt, glm::mat4 projection, glm::mat4 view, glm::vec3& c
 void Game::levelLogic() {
     // this function ticks every second, easier to work with for spawning etc
     secondsCounter++;
-    if(secondsCounter == 5) {
-        auto testZombie = new MoveableObject(glm::vec3 (0.0f, -15.0f, -150.0f), glm::vec3 (0.0f, 0.0f, 0.0f), 15.0f, 50.0f, 15.0f, 2, "green");
-        testZombie->model = zombieModel;
-        //testZombie->setShow(true);
-        addMoveable(testZombie);
+
+    //level
+    if(secondsCounter==delayBetweenLevels)
+    {
+        int alternatingFactor=1;//move one enemy to the left and another to the right,to avoid collisions
+        for (unsigned int i = 0; i < enemyCountPerLevel; ++i) {
+            auto testZombie = new MoveableObject(glm::vec3 (0.0f+10.0f*(float)alternatingFactor*(float)i, -15.0f, -150.0f), glm::vec3 (0.0f, 0.0f, 0.0f), 15.0f, 50.0f, 15.0f, 2, "green");
+            testZombie->model = zombieModel;
+            //testZombie->setShow(true);
+            addMoveable(testZombie);
+            alternatingFactor*=-1;
+        }
+        delayBetweenLevels+=delayBetweenLevelsIncrease;
+        if(enemyCountPerLevel<10)//da se ne bi zakucavali u teksturu
+            enemyCountPerLevel+=enemyCountIncreasePerLevel;
+        enemySpeedFactor+=enemySpeedFactorIncrease;
     }
-    if(secondsCounter == 10) {
-        auto testZombie = new MoveableObject(glm::vec3 (0.0f, -15.0f, -150.0f), glm::vec3 (0.0f, 0.0f, 0.0f), 15.0f, 50.0f, 15.0f, 2, "blue");
-        testZombie->model = zombieModel;
-        //testZombie->setShow(true);
-        addMoveable(testZombie);
-    }
+//    if(secondsCounter == 5) {
+//        auto testZombie = new MoveableObject(glm::vec3 (0.0f, -15.0f, -150.0f), glm::vec3 (0.0f, 0.0f, 0.0f), 15.0f, 50.0f, 15.0f, 2, "green");
+//        testZombie->model = zombieModel;
+//        //testZombie->setShow(true);
+//        addMoveable(testZombie);
+//    }
+//    if(secondsCounter == 10) {
+//        auto testZombie = new MoveableObject(glm::vec3 (0.0f, -15.0f, -150.0f), glm::vec3 (0.0f, 0.0f, 0.0f), 15.0f, 50.0f, 15.0f, 2, "blue");
+//        testZombie->model = zombieModel;
+//        //testZombie->setShow(true);
+//        addMoveable(testZombie);
+//    }
     for(auto &p: objArray) {
         if(p->priorityLevel == 2) {
             if (!p->shouldDelete) {
