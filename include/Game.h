@@ -29,13 +29,10 @@ public:
 
     ModelObject* bullet;
     ModelObject* zombieModel;
-    ModelObject* animeGirlModel;
-
-
-    unsigned int killCount=0;
 
 
 private:
+    void dealDamage(float damage);
     // an array of all objects which update over time
     // for example: bullets, zombies
     std::vector<MoveableObject*> objArray;
@@ -49,6 +46,8 @@ private:
     float fireRate = 0.2;
     float previousFire = 0;
 
+    float playerHp = 100;
+
     //level settings
     unsigned int enemyCountPerLevel=2;
     unsigned enemyCountIncreasePerLevel=1;
@@ -58,9 +57,6 @@ private:
 
     float enemySpeedFactor=2.0;
     float enemySpeedFactorIncrease=1.0;
-
-    unsigned animeGirlCountPerLevel=0;
-    unsigned animeGirlCountPerLevelIncrease=1;
 };
 
 

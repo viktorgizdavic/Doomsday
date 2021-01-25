@@ -233,17 +233,6 @@ int main() {
     programState->game.zombieModel->setTranslateVect(glm::vec3(-3.0f,-10.0f,-8.0f));
     programState->game.zombieModel->setRotateVect(-90.0f,glm::vec3(0.0f,0.0f,1.0f));
 
-//    animeGirl.setup(generalShader,projection,view,programState->camera.Position,dirLight,pointLights,spotLight);
-//    animeGirl.translate(glm::vec3(0.0f,-30.0f,-10.0f));
-//    animeGirl.scale(glm::vec3(1.0f,1.0f,1.0f));
-//    animeGirl.draw(generalShader);
-
-
-    programState->game.animeGirlModel = new ModelObject("resources/objects/Model_D0306021/D0306021.obj");
-    programState->game.animeGirlModel->setScaleVect(glm::vec3(1.0f,1.0f,1.0f));
-    programState->game.animeGirlModel->setTranslateVect(glm::vec3(glm::vec3(-3.0f,-30.0f,-8.0f)));
-    programState->game.animeGirlModel->setRotateVect(-90.0f,glm::vec3(0.0f,0.0f,1.0f));
-
     Room warehouse ("resources/textures/brickwall.jpg","resources/textures/brickwall.jpg","resources/textures/window.png","resources/textures/window.png");
     warehouse.buildHitboxes(&programState->game);
 
@@ -252,7 +241,7 @@ int main() {
     Cube c1 ("resources/textures/container2.png","resources/textures/container2_specular.png");
 
     ModelObject rifle("resources/objects/Model_C0811038/M4.obj");
-    ModelObject animeGirl("resources/objects/Model_D0306021/D0306021.obj");
+    //ModelObject animeGirl("resources/objects/Model_D0306021/D0306021.obj");
     ModelObject forklift("resources/objects/Forklift/Forklift.obj");
 
     // draw in wireframe
@@ -318,11 +307,7 @@ int main() {
         light.draw();
 
         c1.setup(projection,view,programState->camera.Position,dirLight,pointLights,spotLight);
-
-//        c1.translate(glm::vec3(0.0f,-10.0f,20.0f));
-//        c1.scale(glm::vec3(10.0f,10.0f,10.0f));
-//        c1.draw();
-        c1.translate(glm::vec3(4.0f,2.0f,4.0f)*(glm::vec3(60.0f*1/6*1/2,-10.0f,-30.0f-(60.0f*1/6*1/2))+glm::vec3(0.0f,0.0f,20.0f)));
+        c1.translate(glm::vec3(4.0f,2.0f,4.0f)*(glm::vec3(60.0f*1/6*1/2,-12.0f,-30.0f-(60.0f*1/6*1/2))+glm::vec3(0.0f,0.0f,20.0f)));
         c1.scale(glm::vec3(10.0f,10.0f,10.0f));
         c1.draw();
 
@@ -335,16 +320,8 @@ int main() {
         rifle.draw(generalShader);
 
 
-
-        animeGirl.setup(generalShader,projection,view,programState->camera.Position,dirLight,pointLights,spotLight);
-        animeGirl.translate(glm::vec3(0.0f,-30.0f,-10.0f));
-        animeGirl.scale(glm::vec3(1.0f,1.0f,1.0f));
-        animeGirl.draw(generalShader);
-
-
-
         forklift.setup(generalShader,projection,view,programState->camera.Position,dirLight,pointLights,spotLight);
-        forklift.translate(glm::vec3(-20.0f,-30.0f,-10.0f));
+        forklift.translate(glm::vec3(-100.0f,-30.0f,-10.0f));
         forklift.scale(glm::vec3(5.0f,5.0f,5.0f));
         forklift.draw(generalShader);
 
