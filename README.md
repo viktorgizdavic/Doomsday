@@ -30,7 +30,7 @@ clion .
 Clion should automatically load CMakeLists.txt and you are good to go! If you have any troubles, feel free to contact us.
 
 ## 🖥️ Screenshot
-![](ss.png)
+![](Doomsday.png)
 
 #### Authors
 -   **Viktor Gizdavić**
