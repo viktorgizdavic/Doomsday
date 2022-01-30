@@ -12,6 +12,7 @@ endfunction()
 
 set(CMAKE_POLICY_DEFAULT_CMP0012 NEW)
 set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_MODULE_PATH cmake/modules)
 
 list(APPEND CMAKE_CXX_FLAGS "-Wall -Wextra -Wno-unused-variable -Wno-unused-parameter -O3")
 
