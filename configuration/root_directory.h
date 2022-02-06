@@ -1,1 +1,1 @@
-const char *logl_root = "/home/bajaks/random-tehc-stuff/Doomsday";
+const char *logl_root = "~/random-tehc-stuff/Doomsday";
