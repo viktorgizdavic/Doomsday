@@ -103,7 +103,7 @@ ProgramState *programState;
 
 void DrawImGui(ProgramState *programState);
 
-int main() {
+auto main() -> int {
     // glfw: initialize and configure
     // ------------------------------
     glfwInit();
@@ -117,8 +117,8 @@ int main() {
 
     // glfw window creation
     // --------------------
-    GLFWwindow *window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
-    if (window == NULL) {
+    GLFWwindow *window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", nullptr, nullptr);
+    if (window == nullptr) {
         std::cout << "Failed to create GLFW window" << std::endl;
         glfwTerminate();
         return -1;

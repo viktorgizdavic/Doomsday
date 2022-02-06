@@ -13,6 +13,7 @@ endfunction()
 set(CMAKE_POLICY_DEFAULT_CMP0012 NEW)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/modules)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 #list(APPEND CMAKE_CXX_FLAGS "-Wall -g -Wextra -Wno-unused-variable -Wno-unused-parameter -O3")
 set(CMAKE_CXX_FLAGS_DEBUG_INIT "-Wall -g -Wextra -Wno-unused-variable -Wno-unused-parameter -O0")

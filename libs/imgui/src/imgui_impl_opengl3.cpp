@@ -75,13 +75,13 @@
 #define _CRT_SECURE_NO_WARNINGS
 #endif
 
-#include "imgui.h"
 #include "imgui_impl_opengl3.h"
-#include <stdio.h>
+#include "imgui.h"
+#include <cstdio>
 #if defined(_MSC_VER) && _MSC_VER <= 1500 // MSVC 2008 or earlier
 #include <stddef.h>     // intptr_t
 #else
-#include <stdint.h>     // intptr_t
+#include <cstdint>     // intptr_t
 #endif
 
 // GL includes
@@ -150,7 +150,7 @@ static GLuint       g_AttribLocationVtxPos = 0, g_AttribLocationVtxUV = 0, g_Att
 static unsigned int g_VboHandle = 0, g_ElementsHandle = 0;
 
 // Functions
-bool    ImGui_ImplOpenGL3_Init(const char* glsl_version)
+auto    ImGui_ImplOpenGL3_Init(const char* glsl_version) -> bool
 {
     // Query for GL version (e.g. 320 for GL 3.2)
 #if !defined(IMGUI_IMPL_OPENGL_ES2)
@@ -189,7 +189,7 @@ bool    ImGui_ImplOpenGL3_Init(const char* glsl_version)
     if (glsl_version == NULL)
         glsl_version = "#version 150";
 #else
-    if (glsl_version == NULL)
+    if (glsl_version == nullptr)
         glsl_version = "#version 130";
 #endif
     IM_ASSERT((int)strlen(glsl_version) + 2 < IM_ARRAYSIZE(g_GlslVersionString));
@@ -373,7 +373,7 @@ void    ImGui_ImplOpenGL3_RenderDrawData(ImDrawData* draw_data)
         for (int cmd_i = 0; cmd_i < cmd_list->CmdBuffer.Size; cmd_i++)
         {
             const ImDrawCmd* pcmd = &cmd_list->CmdBuffer[cmd_i];
-            if (pcmd->UserCallback != NULL)
+            if (pcmd->UserCallback != nullptr)
             {
                 // User callback, registered via ImDrawList::AddCallback()
                 // (ImDrawCallback_ResetRenderState is a special callback value used by the user to request the renderer to reset render state.)
@@ -443,7 +443,7 @@ void    ImGui_ImplOpenGL3_RenderDrawData(ImDrawData* draw_data)
     glScissor(last_scissor_box[0], last_scissor_box[1], (GLsizei)last_scissor_box[2], (GLsizei)last_scissor_box[3]);
 }
 
-bool ImGui_ImplOpenGL3_CreateFontsTexture()
+auto ImGui_ImplOpenGL3_CreateFontsTexture() -> bool
 {
     // Build texture atlas
     ImGuiIO& io = ImGui::GetIO();
@@ -478,13 +478,13 @@ void ImGui_ImplOpenGL3_DestroyFontsTexture()
     {
         ImGuiIO& io = ImGui::GetIO();
         glDeleteTextures(1, &g_FontTexture);
-        io.Fonts->TexID = 0;
+        io.Fonts->TexID = nullptr;
         g_FontTexture = 0;
     }
 }
 
 // If you get an error please report on github. You may try different GL context version or GLSL version. See GL<>GLSL version table at the top of this file.
-static bool CheckShader(GLuint handle, const char* desc)
+static auto CheckShader(GLuint handle, const char* desc) -> bool
 {
     GLint status = 0, log_length = 0;
     glGetShaderiv(handle, GL_COMPILE_STATUS, &status);
@@ -495,14 +495,14 @@ static bool CheckShader(GLuint handle, const char* desc)
     {
         ImVector<char> buf;
         buf.resize((int)(log_length + 1));
-        glGetShaderInfoLog(handle, log_length, NULL, (GLchar*)buf.begin());
+        glGetShaderInfoLog(handle, log_length, nullptr, (GLchar*)buf.begin());
         fprintf(stderr, "%s\n", buf.begin());
     }
     return (GLboolean)status == GL_TRUE;
 }
 
 // If you get an error please report on GitHub. You may try different GL context version or GLSL version.
-static bool CheckProgram(GLuint handle, const char* desc)
+static auto CheckProgram(GLuint handle, const char* desc) -> bool
 {
     GLint status = 0, log_length = 0;
     glGetProgramiv(handle, GL_LINK_STATUS, &status);
@@ -513,13 +513,13 @@ static bool CheckProgram(GLuint handle, const char* desc)
     {
         ImVector<char> buf;
         buf.resize((int)(log_length + 1));
-        glGetProgramInfoLog(handle, log_length, NULL, (GLchar*)buf.begin());
+        glGetProgramInfoLog(handle, log_length, nullptr, (GLchar*)buf.begin());
         fprintf(stderr, "%s\n", buf.begin());
     }
     return (GLboolean)status == GL_TRUE;
 }
 
-bool    ImGui_ImplOpenGL3_CreateDeviceObjects()
+auto    ImGui_ImplOpenGL3_CreateDeviceObjects() -> bool
 {
     // Backup GL state
     GLint last_texture, last_array_buffer;
@@ -635,8 +635,8 @@ bool    ImGui_ImplOpenGL3_CreateDeviceObjects()
         "}\n";
 
     // Select shaders matching our GLSL versions
-    const GLchar* vertex_shader = NULL;
-    const GLchar* fragment_shader = NULL;
+    const GLchar* vertex_shader = nullptr;
+    const GLchar* fragment_shader = nullptr;
     if (glsl_version < 130)
     {
         vertex_shader = vertex_shader_glsl_120;
@@ -661,13 +661,13 @@ bool    ImGui_ImplOpenGL3_CreateDeviceObjects()
     // Create shaders
     const GLchar* vertex_shader_with_version[2] = { g_GlslVersionString, vertex_shader };
     g_VertHandle = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(g_VertHandle, 2, vertex_shader_with_version, NULL);
+    glShaderSource(g_VertHandle, 2, vertex_shader_with_version, nullptr);
     glCompileShader(g_VertHandle);
     CheckShader(g_VertHandle, "vertex shader");
 
     const GLchar* fragment_shader_with_version[2] = { g_GlslVersionString, fragment_shader };
     g_FragHandle = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(g_FragHandle, 2, fragment_shader_with_version, NULL);
+    glShaderSource(g_FragHandle, 2, fragment_shader_with_version, nullptr);
     glCompileShader(g_FragHandle);
     CheckShader(g_FragHandle, "fragment shader");
 
