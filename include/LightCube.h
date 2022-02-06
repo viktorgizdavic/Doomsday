@@ -89,6 +89,7 @@ public:
 
         lightCubeShader.use();
         lightCubeShader.setVec3("color",color);
+
     }
 
     void setup(glm::mat4 projection,glm::mat4 view)
@@ -131,6 +132,11 @@ public:
         resetTransformation();
     }
 
+    ~LightCube() {
+        glDisableVertexAttribArray(0);
+        glDeleteVertexArrays(1,&VAO);
+        glDeleteBuffers(1,&VBO);
+    }
 };
 
 #endif //DOOMSDAY_LIGHTCUBE_H
