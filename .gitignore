@@ -309,4 +309,4 @@ _deps
 /build
 memory_report*.txt
 Doomsday
-resources/program_state.txt
+**/program_state.txt
