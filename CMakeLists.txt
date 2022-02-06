@@ -12,9 +12,11 @@ endfunction()
 
 set(CMAKE_POLICY_DEFAULT_CMP0012 NEW)
 set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_MODULE_PATH cmake/modules)
+set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/modules)
 
-list(APPEND CMAKE_CXX_FLAGS "-Wall -g -Wextra -Wno-unused-variable -Wno-unused-parameter -O3")
+#list(APPEND CMAKE_CXX_FLAGS "-Wall -g -Wextra -Wno-unused-variable -Wno-unused-parameter -O3")
+set(CMAKE_CXX_FLAGS_DEBUG_INIT "-Wall -g -Wextra -Wno-unused-variable -Wno-unused-parameter -O0")
+set(CMAKE_CXX_FLAGS_RELEASE_INIT "-O3")
 
 file(GLOB SOURCES "src/*.cpp" "src/*.c" src/main.cpp)
 file(GLOB HEADERS "include/*.h" "include/*.hpp")
