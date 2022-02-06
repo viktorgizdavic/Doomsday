@@ -65,7 +65,7 @@ enum GlfwClientApi
     GlfwClientApi_OpenGL,
     GlfwClientApi_Vulkan
 };
-static GLFWwindow*          g_Window = NULL;    // Main window
+static GLFWwindow*          g_Window = nullptr;    // Main window
 static GlfwClientApi        g_ClientApi = GlfwClientApi_Unknown;
 static double               g_Time = 0.0;
 static bool                 g_MouseJustPressed[ImGuiMouseButton_COUNT] = {};
@@ -73,12 +73,12 @@ static GLFWcursor*          g_MouseCursors[ImGuiMouseCursor_COUNT] = {};
 static bool                 g_InstalledCallbacks = false;
 
 // Chain GLFW callbacks: our callbacks will call the user's previously installed callbacks, if any.
-static GLFWmousebuttonfun   g_PrevUserCallbackMousebutton = NULL;
-static GLFWscrollfun        g_PrevUserCallbackScroll = NULL;
-static GLFWkeyfun           g_PrevUserCallbackKey = NULL;
-static GLFWcharfun          g_PrevUserCallbackChar = NULL;
+static GLFWmousebuttonfun   g_PrevUserCallbackMousebutton = nullptr;
+static GLFWscrollfun        g_PrevUserCallbackScroll = nullptr;
+static GLFWkeyfun           g_PrevUserCallbackKey = nullptr;
+static GLFWcharfun          g_PrevUserCallbackChar = nullptr;
 
-static const char* ImGui_ImplGlfw_GetClipboardText(void* user_data)
+static auto ImGui_ImplGlfw_GetClipboardText(void* user_data) -> const char*
 {
     return glfwGetClipboardString((GLFWwindow*)user_data);
 }
@@ -90,7 +90,7 @@ static void ImGui_ImplGlfw_SetClipboardText(void* user_data, const char* text)
 
 void ImGui_ImplGlfw_MouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
 {
-    if (g_PrevUserCallbackMousebutton != NULL)
+    if (g_PrevUserCallbackMousebutton != nullptr)
         g_PrevUserCallbackMousebutton(window, button, action, mods);
 
     if (action == GLFW_PRESS && button >= 0 && button < IM_ARRAYSIZE(g_MouseJustPressed))
@@ -99,7 +99,7 @@ void ImGui_ImplGlfw_MouseButtonCallback(GLFWwindow* window, int button, int acti
 
 void ImGui_ImplGlfw_ScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
 {
-    if (g_PrevUserCallbackScroll != NULL)
+    if (g_PrevUserCallbackScroll != nullptr)
         g_PrevUserCallbackScroll(window, xoffset, yoffset);
 
     ImGuiIO& io = ImGui::GetIO();
@@ -109,7 +109,7 @@ void ImGui_ImplGlfw_ScrollCallback(GLFWwindow* window, double xoffset, double yo
 
 void ImGui_ImplGlfw_KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-    if (g_PrevUserCallbackKey != NULL)
+    if (g_PrevUserCallbackKey != nullptr)
         g_PrevUserCallbackKey(window, key, scancode, action, mods);
 
     ImGuiIO& io = ImGui::GetIO();
@@ -131,14 +131,14 @@ void ImGui_ImplGlfw_KeyCallback(GLFWwindow* window, int key, int scancode, int a
 
 void ImGui_ImplGlfw_CharCallback(GLFWwindow* window, unsigned int c)
 {
-    if (g_PrevUserCallbackChar != NULL)
+    if (g_PrevUserCallbackChar != nullptr)
         g_PrevUserCallbackChar(window, c);
 
     ImGuiIO& io = ImGui::GetIO();
     io.AddInputCharacter(c);
 }
 
-static bool ImGui_ImplGlfw_Init(GLFWwindow* window, bool install_callbacks, GlfwClientApi client_api)
+static auto ImGui_ImplGlfw_Init(GLFWwindow* window, bool install_callbacks, GlfwClientApi client_api) -> bool
 {
     g_Window = window;
     g_Time = 0.0;
@@ -184,7 +184,7 @@ static bool ImGui_ImplGlfw_Init(GLFWwindow* window, bool install_callbacks, Glfw
     // (By design, on X11 cursors are user configurable and some cursors may be missing. When a cursor doesn't exist,
     // GLFW will emit an error which will often be printed by the app, so we temporarily disable error reporting.
     // Missing cursors will return NULL and our _UpdateMouseCursor() function will use the Arrow cursor instead.)
-    GLFWerrorfun prev_error_callback = glfwSetErrorCallback(NULL);
+    GLFWerrorfun prev_error_callback = glfwSetErrorCallback(nullptr);
     g_MouseCursors[ImGuiMouseCursor_Arrow] = glfwCreateStandardCursor(GLFW_ARROW_CURSOR);
     g_MouseCursors[ImGuiMouseCursor_TextInput] = glfwCreateStandardCursor(GLFW_IBEAM_CURSOR);
     g_MouseCursors[ImGuiMouseCursor_ResizeNS] = glfwCreateStandardCursor(GLFW_VRESIZE_CURSOR);
@@ -204,10 +204,10 @@ static bool ImGui_ImplGlfw_Init(GLFWwindow* window, bool install_callbacks, Glfw
     glfwSetErrorCallback(prev_error_callback);
 
     // Chain GLFW callbacks: our callbacks will call the user's previously installed callbacks, if any.
-    g_PrevUserCallbackMousebutton = NULL;
-    g_PrevUserCallbackScroll = NULL;
-    g_PrevUserCallbackKey = NULL;
-    g_PrevUserCallbackChar = NULL;
+    g_PrevUserCallbackMousebutton = nullptr;
+    g_PrevUserCallbackScroll = nullptr;
+    g_PrevUserCallbackKey = nullptr;
+    g_PrevUserCallbackChar = nullptr;
     if (install_callbacks)
     {
         g_InstalledCallbacks = true;
@@ -221,12 +221,12 @@ static bool ImGui_ImplGlfw_Init(GLFWwindow* window, bool install_callbacks, Glfw
     return true;
 }
 
-bool ImGui_ImplGlfw_InitForOpenGL(GLFWwindow* window, bool install_callbacks)
+auto ImGui_ImplGlfw_InitForOpenGL(GLFWwindow* window, bool install_callbacks) -> bool
 {
     return ImGui_ImplGlfw_Init(window, install_callbacks, GlfwClientApi_OpenGL);
 }
 
-bool ImGui_ImplGlfw_InitForVulkan(GLFWwindow* window, bool install_callbacks)
+auto ImGui_ImplGlfw_InitForVulkan(GLFWwindow* window, bool install_callbacks) -> bool
 {
     return ImGui_ImplGlfw_Init(window, install_callbacks, GlfwClientApi_Vulkan);
 }
@@ -242,10 +242,10 @@ void ImGui_ImplGlfw_Shutdown()
         g_InstalledCallbacks = false;
     }
 
-    for (ImGuiMouseCursor cursor_n = 0; cursor_n < ImGuiMouseCursor_COUNT; cursor_n++)
+    for (auto & g_MouseCursor : g_MouseCursors)
     {
-        glfwDestroyCursor(g_MouseCursors[cursor_n]);
-        g_MouseCursors[cursor_n] = NULL;
+        glfwDestroyCursor(g_MouseCursor);
+        g_MouseCursor = nullptr;
     }
     g_ClientApi = GlfwClientApi_Unknown;
 }
