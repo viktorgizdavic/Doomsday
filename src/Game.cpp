@@ -147,7 +147,7 @@ void Game::shoot(glm::vec3 position, glm::vec3 direction) {
     }
 }
 
-MoveableObject* Game::moveLookahead(MoveableObject * o) {
+auto Game::moveLookahead(MoveableObject * o) -> MoveableObject* {
     if(o->shouldDelete) return nullptr;
 
     // by default it didn't collide with anything

@@ -52,7 +52,7 @@ void MoveableObject::setMove(bool value) {
     canMove = value;
 }
 
-bool MoveableObject::checkMove() const {
+auto MoveableObject::checkMove() const -> bool {
     return canMove;
 }
 

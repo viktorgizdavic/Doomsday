@@ -307,3 +307,6 @@ _deps
 /build.ninja
 /.cmake/
 /build
+memory_report*.txt
+Doomsday
+**/program_state.txt

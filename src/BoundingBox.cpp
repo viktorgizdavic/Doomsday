@@ -34,19 +34,19 @@ void BoundingBox::updateBox(float xDt, float yDt, float zDt) {
     maxZ += zDt;
 }
 
-bool BoundingBox::boxesIntersect(BoundingBox &box1, BoundingBox &box2) {
+auto BoundingBox::boxesIntersect(BoundingBox &box1, BoundingBox &box2) -> bool {
     return (box1.minX <= box2.maxX && box1.maxX >= box2.minX) &&
            (box1.minY <= box2.maxY && box1.maxY >= box2.minY) &&
            (box1.minZ <= box2.maxZ && box1.maxZ >= box2.minZ);
 }
 
-bool BoundingBox::pointBoxIntersect(float pointX, float pointY, float pointZ, BoundingBox &box) {
+auto BoundingBox::pointBoxIntersect(float pointX, float pointY, float pointZ, BoundingBox &box) -> bool {
     return (pointX >= box.minX && pointX <= box.maxX) &&
            (pointY >= box.minY && pointY <= box.maxY) &&
            (pointZ >= box.minZ && pointZ <= box.maxZ);
 }
 
-LightCube *BoundingBox::getVisual() {
+auto BoundingBox::getVisual() -> LightCube * {
     return boxVisual;
 }
 

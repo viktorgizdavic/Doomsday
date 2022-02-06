@@ -1,0 +1,16 @@
+BasedOnStyle: LLVM
+IndentWidth: 12
+UseTab: Always
+BreakBeforeBraces: Attach
+AllowShortIfStatementsOnASingleLine: false
+IndentCaseLabels: true
+AlignOperands: AlignAfterOperator
+AlignArrayOfStructures: Left
+SpacesInParentheses: false
+SpacesInSquareBrackets: false
+SpacesInConditionalStatement: true
+AccessModifierOffset: 0
+AlignTrailingComments: true
+IndentCaseBlocks: true
+AllowShortFunctionsOnASingleLine: All
+
